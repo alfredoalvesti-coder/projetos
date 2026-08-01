@@ -1,0 +1,276 @@
+.admin {
+  min-height: 100dvh;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(212, 175, 55, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(255, 255, 255, 0.04), transparent 50%),
+    var(--bg);
+  color: var(--text);
+}
+
+.admin__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--gold);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.admin__top h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  max-width: 36rem;
+}
+
+.panel {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 1rem;
+  background: rgba(24, 24, 24, 0.92);
+}
+
+.panel__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel__head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid #333;
+  border-radius: 0.65rem;
+  background: #121212;
+  color: var(--text);
+  padding: 0.75rem 0.85rem;
+  outline: none;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 5rem;
+}
+
+.field.is-invalid input,
+.field.is-invalid textarea {
+  border-color: #c45c5c;
+}
+
+.form__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn {
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: #111;
+  padding: 0.7rem 1.2rem;
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border-radius: 0.55rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--gold);
+}
+
+.btn--small {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.btn--danger {
+  background: transparent;
+  border-color: #8a3a3a;
+  color: #e08a8a;
+}
+
+.link {
+  border: 0;
+  background: transparent;
+  color: var(--gold);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback {
+  margin: 0 0 0.85rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.55rem;
+  font-size: 0.9rem;
+}
+
+.feedback--error {
+  background: rgba(196, 92, 92, 0.15);
+  color: #f0a8a8;
+}
+
+.feedback--ok {
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gold);
+}
+
+.muted {
+  margin: 0;
+  color: var(--muted);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.table th,
+.table td {
+  padding: 0.85rem 0.65rem;
+  text-align: left;
+  border-bottom: 1px solid #2a2a2a;
+  vertical-align: top;
+}
+
+.table th {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.table td.desc {
+  color: var(--muted);
+  max-width: 22rem;
+}
+
+.table tr.is-editing {
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .admin__top {
+    flex-direction: column;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .table {
+    min-width: 0;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    margin-bottom: 0.85rem;
+    padding: 0.85rem;
+    border: 1px solid #2a2a2a;
+    border-radius: 0.75rem;
+  }
+
+  .table td {
+    border: 0;
+    padding: 0.35rem 0;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .actions {
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  .actions::before {
+    display: none;
+  }
+}

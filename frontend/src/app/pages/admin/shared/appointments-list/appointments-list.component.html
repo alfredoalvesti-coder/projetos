@@ -1,0 +1,36 @@
+<section class="list-panel">
+  <header class="list-panel__head">
+    <h2>{{ title() }}</h2>
+    <span class="list-panel__count">{{ items().length }} hoje</span>
+  </header>
+
+  @if (items().length === 0) {
+    <p class="list-panel__empty">{{ emptyMessage() }}</p>
+  } @else {
+    <ul class="list">
+      @for (item of items(); track item.id) {
+        <li>
+          <button type="button" class="row" (click)="itemClick.emit(item)">
+            <span class="row__avatar" aria-hidden="true">
+              <svg lucideUserRound [size]="18"></svg>
+            </span>
+            <span class="row__main">
+              <span class="row__name">{{ item.clientName }}</span>
+              <span class="row__meta">
+                <svg lucideScissors [size]="14"></svg>
+                {{ item.service }} · {{ item.barber }}
+              </span>
+            </span>
+            <span class="row__side">
+              <span class="row__time">{{ item.time }}</span>
+              <span class="row__status" [attr.data-status]="item.status">
+                {{ statusLabel(item.status) }}
+              </span>
+              <span class="row__price">{{ item.price | currency: 'BRL' }}</span>
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

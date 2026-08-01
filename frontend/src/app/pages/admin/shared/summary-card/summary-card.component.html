@@ -1,0 +1,25 @@
+<article class="card" [ngClass]="'card--' + accent()">
+  <div class="card__icon" aria-hidden="true">
+    @switch (icon()) {
+      @case ('check') {
+        <svg lucideCalendarCheck [size]="20"></svg>
+      }
+      @case ('clock') {
+        <svg lucideClock3 [size]="20"></svg>
+      }
+      @case ('wallet') {
+        <svg lucideWallet [size]="20"></svg>
+      }
+      @default {
+        <svg lucideCalendar [size]="20"></svg>
+      }
+    }
+  </div>
+  <div class="card__body">
+    <p class="card__label">{{ label() }}</p>
+    <p class="card__value">{{ value() }}</p>
+    @if (hint()) {
+      <p class="card__hint">{{ hint() }}</p>
+    }
+  </div>
+</article>

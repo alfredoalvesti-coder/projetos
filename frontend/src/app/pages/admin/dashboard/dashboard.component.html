@@ -1,0 +1,57 @@
+<section class="dashboard">
+  <div class="dashboard__intro">
+    <div>
+      <p class="eyebrow">{{ todayLabel }}</p>
+      <h2>Resumo do dia</h2>
+    </div>
+    <button type="button" class="ghost-cta" (click)="onNewAppointment()">
+      <svg lucideArrowUpRight [size]="16"></svg>
+      Novo agendamento
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <app-summary-card
+      label="Agendamentos do dia"
+      [value]="'' + summary.appointmentsToday"
+      hint="Inclui confirmados e pendentes"
+      icon="calendar"
+    />
+    <app-summary-card
+      label="Concluídos"
+      [value]="'' + summary.completed"
+      hint="Atendimentos finalizados"
+      icon="check"
+      accent="muted"
+    />
+    <app-summary-card
+      label="Próximos atendimentos"
+      [value]="'' + summary.upcoming"
+      hint="Restantes na agenda"
+      icon="clock"
+    />
+    <app-summary-card
+      label="Faturamento previsto"
+      [value]="summary.expectedRevenueLabel"
+      hint="Com base nos horários de hoje"
+      icon="wallet"
+    />
+  </div>
+
+  <div class="dashboard__grid">
+    <app-appointments-list [items]="upcomingAppointments()" />
+
+    <aside class="insight">
+      <div class="insight__icon" aria-hidden="true">
+        <svg lucideSparkles [size]="18"></svg>
+      </div>
+      <h3>Operação</h3>
+      <p>{{ notice() }}</p>
+      <ul>
+        <li>3 barbeiros em turno</li>
+        <li>Taxa de ocupação 82%</li>
+        <li>Próximo encaixe: 18:00</li>
+      </ul>
+    </aside>
+  </div>
+</section>

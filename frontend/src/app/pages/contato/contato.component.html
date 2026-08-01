@@ -1,0 +1,51 @@
+<section class="page">
+  <header class="page__head">
+    <h1>Contato</h1>
+    <p>Fale com a Barbearia Singer. Respondemos o mais rápido possível.</p>
+  </header>
+
+  <div class="layout">
+    <aside class="info">
+      <div>
+        <h2>Endereço</h2>
+        <p>Rua Exemplo, 123 — Centro</p>
+      </div>
+      <div>
+        <h2>Horário</h2>
+        <p>Seg a Sáb · 09h às 19h</p>
+      </div>
+      <div>
+        <h2>WhatsApp</h2>
+        <p>(00) 00000-0000</p>
+      </div>
+      <div>
+        <h2>Email</h2>
+        <p>contato&#64;barbeariasinger.com</p>
+      </div>
+    </aside>
+
+    @if (enviado()) {
+      <div class="notice">
+        <h2>Mensagem enviada</h2>
+        <p>Obrigado pelo contato. Em breve retornamos.</p>
+        <button type="button" class="btn" (click)="enviado.set(false)">Nova mensagem</button>
+      </div>
+    } @else {
+      <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+        <label class="field">
+          <span>Nome</span>
+          <input type="text" formControlName="nome" placeholder="Seu nome" />
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" formControlName="email" placeholder="voce@email.com" />
+        </label>
+        <label class="field">
+          <span>Mensagem</span>
+          <textarea formControlName="mensagem" rows="5" placeholder="Como podemos ajudar?"></textarea>
+        </label>
+        <button class="btn" type="submit">Enviar</button>
+      </form>
+    }
+  </div>
+</section>

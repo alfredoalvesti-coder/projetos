@@ -1,0 +1,30 @@
+<header class="header">
+  <div class="header__left">
+    <button
+      type="button"
+      class="icon-btn header__menu"
+      aria-label="Abrir menu"
+      (click)="menuToggle.emit()"
+    >
+      <svg lucideMenu [size]="20"></svg>
+    </button>
+    <div>
+      <h1>{{ title() }}</h1>
+      <p>{{ subtitle() }}</p>
+    </div>
+  </div>
+
+  <div class="header__right">
+    <button type="button" class="icon-btn" aria-label="Notificações">
+      <svg lucideBell [size]="18"></svg>
+    </button>
+    <button type="button" class="cta" (click)="newAppointment.emit()">
+      <svg lucidePlus [size]="18"></svg>
+      Novo agendamento
+    </button>
+    <div class="user" aria-label="Usuário logado">
+      <span class="user__avatar">{{ userName().charAt(0) }}</span>
+      <span class="user__name">{{ userName() }}</span>
+    </div>
+  </div>
+</header>

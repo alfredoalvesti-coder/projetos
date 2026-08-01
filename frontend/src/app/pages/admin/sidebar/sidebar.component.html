@@ -1,0 +1,87 @@
+<aside class="sidebar" [class.is-open]="open()" aria-label="Menu administrativo">
+  <div class="sidebar__brand">
+    <span class="sidebar__mark" aria-hidden="true"></span>
+    <div>
+      <p class="sidebar__eyebrow">Painel</p>
+      <strong class="sidebar__name">Barbearia Singer</strong>
+    </div>
+  </div>
+
+  <nav class="sidebar__nav">
+    @for (item of items; track item.label) {
+      @if (item.route && !item.disabled) {
+        <a
+          class="nav-item"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          (click)="onNavigate()"
+        >
+          @switch (item.icon) {
+            @case ('dashboard') {
+              <svg lucideLayoutDashboard [size]="18"></svg>
+            }
+            @case ('appointments') {
+              <svg lucideCalendarDays [size]="18"></svg>
+            }
+            @case ('services') {
+              <svg lucideScissors [size]="18"></svg>
+            }
+            @case ('barbers') {
+              <svg lucideUsers [size]="18"></svg>
+            }
+            @case ('clients') {
+              <svg lucideUserRound [size]="18"></svg>
+            }
+            @case ('hours') {
+              <svg lucideClock3 [size]="18"></svg>
+            }
+            @case ('site') {
+              <svg lucideGlobe [size]="18"></svg>
+            }
+            @default {
+              <svg lucideSettings [size]="18"></svg>
+            }
+          }
+          <span>{{ item.label }}</span>
+        </a>
+      } @else {
+        <button type="button" class="nav-item is-disabled" disabled title="Em breve">
+          @switch (item.icon) {
+            @case ('dashboard') {
+              <svg lucideLayoutDashboard [size]="18"></svg>
+            }
+            @case ('appointments') {
+              <svg lucideCalendarDays [size]="18"></svg>
+            }
+            @case ('services') {
+              <svg lucideScissors [size]="18"></svg>
+            }
+            @case ('barbers') {
+              <svg lucideUsers [size]="18"></svg>
+            }
+            @case ('clients') {
+              <svg lucideUserRound [size]="18"></svg>
+            }
+            @case ('hours') {
+              <svg lucideClock3 [size]="18"></svg>
+            }
+            @case ('site') {
+              <svg lucideGlobe [size]="18"></svg>
+            }
+            @default {
+              <svg lucideSettings [size]="18"></svg>
+            }
+          }
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    }
+  </nav>
+
+  <div class="sidebar__footer">
+    <button type="button" class="nav-item nav-item--danger" (click)="logout()">
+      <svg lucideLogOut [size]="18"></svg>
+      <span>Sair</span>
+    </button>
+  </div>
+</aside>

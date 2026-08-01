@@ -1,0 +1,126 @@
+<section class="page">
+  <header class="page__head">
+    <h1>Agendamento</h1>
+    <p>Escolha serviço, barbeiro e horário. Campos com * são obrigatórios.</p>
+  </header>
+
+  @if (!auth.isAuthenticated()) {
+    <div class="notice">
+      <p>Para agendar, entre na sua conta ou crie uma nova. O restante do site continua livre.</p>
+      <button type="button" class="btn" (click)="irParaLogin()">Entrar / Cadastrar</button>
+    </div>
+  } @else if (enviado()) {
+    <div class="notice notice--ok">
+      <h2>Agendamento salvo</h2>
+      <p>
+        Pronto, {{ auth.session()?.nome }}! Seu horário foi registrado
+        @if (ultimoId(); as id) {
+          (#{{ id }})
+        }
+        com status pendente.
+      </p>
+      <div class="notice__actions">
+        <a routerLink="/meus-agendamentos" class="btn">Ver meus horários</a>
+        <button type="button" class="btn btn--ghost" (click)="enviado.set(false)">Fazer outro</button>
+      </div>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <p class="feedback" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label class="field" [class.is-invalid]="campoInvalido('servico')">
+        <span>Serviço *</span>
+        <select formControlName="servico" [attr.aria-invalid]="campoInvalido('servico')">
+          <option value="" disabled>Selecione</option>
+          @for (servico of servicos(); track servico.id) {
+            <option [value]="servico.nome">{{ servico.nome }}</option>
+          }
+        </select>
+        @if (campoInvalido('servico')) {
+          <small class="field__error">Selecione um serviço.</small>
+        }
+      </label>
+
+      <label class="field" [class.is-invalid]="campoInvalido('barbeiro')">
+        <span>Barbeiro *</span>
+        <select formControlName="barbeiro" [attr.aria-invalid]="campoInvalido('barbeiro')">
+          <option value="" disabled>Selecione</option>
+          @for (barbeiro of barbeiros; track barbeiro) {
+            <option [value]="barbeiro">{{ barbeiro }}</option>
+          }
+        </select>
+        @if (campoInvalido('barbeiro')) {
+          <small class="field__error">Selecione um barbeiro.</small>
+        }
+      </label>
+
+      <div class="row">
+        <label class="field" [class.is-invalid]="campoInvalido('data')">
+          <span>Data *</span>
+          <div class="date-field" [class.is-invalid]="campoInvalido('data')">
+            <input
+              #dataInput
+              type="date"
+              formControlName="data"
+              [attr.aria-invalid]="campoInvalido('data')"
+            />
+            <button
+              type="button"
+              class="date-field__btn"
+              aria-label="Abrir calendário"
+              (click)="abrirCalendario(dataInput)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3 9h18" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="7" y="12" width="3" height="3" rx="0.5" fill="currentColor"/>
+                <rect x="11" y="12" width="3" height="3" rx="0.5" fill="currentColor"/>
+                <rect x="15" y="12" width="3" height="3" rx="0.5" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+          @if (campoInvalido('data')) {
+            <small class="field__error">Escolha uma data.</small>
+          }
+        </label>
+
+        <label class="field" [class.is-invalid]="campoInvalido('horario')">
+          <span>Horário *</span>
+          <select formControlName="horario" [attr.aria-invalid]="campoInvalido('horario')">
+            <option value="" disabled>
+              @if (!form.controls.barbeiro.value || !form.controls.data.value) {
+                Selecione barbeiro e data
+              } @else if (loadingHorarios()) {
+                Carregando horários…
+              } @else if (horariosDisponiveis().length === 0) {
+                Sem horários livres neste dia
+              } @else {
+                Selecione
+              }
+            </option>
+            @for (horario of horariosDisponiveis(); track horario) {
+              <option [value]="horario">{{ horario }}</option>
+            }
+          </select>
+          @if (campoInvalido('horario')) {
+            <small class="field__error">Escolha um horário.</small>
+          } @else if (form.controls.barbeiro.value && form.controls.data.value && !loadingHorarios() && horariosDisponiveis().length === 0) {
+            <small class="field__hint">Todos os horários deste barbeiro já estão ocupados nesta data.</small>
+          }
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Observação (opcional)</span>
+        <textarea formControlName="observacao" rows="3" placeholder="Ex.: preferência de máquina 1.5"></textarea>
+      </label>
+
+      <button class="btn btn--primary" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Salvando…' : 'Confirmar agendamento' }}
+      </button>
+    </form>
+  }
+</section>

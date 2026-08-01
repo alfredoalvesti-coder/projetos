@@ -1,0 +1,138 @@
+.dashboard {
+  display: grid;
+  gap: 1.35rem;
+  padding: 1.35rem 0 2rem;
+  animation: fade-up 0.45s ease both;
+}
+
+.dashboard__intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.3rem;
+  color: #d4af37;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dashboard__intro h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.ghost-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 0.65rem;
+  background: transparent;
+  color: #d4af37;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ghost-cta:hover {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 0.9fr);
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.insight {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.12), transparent 45%),
+    #161616;
+}
+
+.insight__icon {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin-bottom: 0.85rem;
+  border-radius: 0.65rem;
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.12);
+}
+
+.insight h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.insight p {
+  margin: 0.55rem 0 1rem;
+  color: #a3a3a3;
+  line-height: 1.5;
+}
+
+.insight ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.insight li {
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #d5d5d5;
+  font-size: 0.88rem;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1100px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__intro {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

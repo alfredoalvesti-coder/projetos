@@ -1,0 +1,41 @@
+<div class="site">
+  <header class="topbar">
+    <a routerLink="/home" class="brand">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span class="brand__name">Barbearia Singer</span>
+    </a>
+
+    <button class="menu-btn" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()">
+      Menu
+    </button>
+
+    <nav class="nav" [class.is-open]="menuOpen()">
+      <a routerLink="/home" routerLinkActive="is-active">Home</a>
+      <a routerLink="/servicos" routerLinkActive="is-active">Serviços</a>
+      <a routerLink="/barbeiros" routerLinkActive="is-active">Barbeiros</a>
+      <a routerLink="/agendamento" routerLinkActive="is-active">Agendamento</a>
+      @if (auth.isAuthenticated()) {
+        <a routerLink="/meus-agendamentos" routerLinkActive="is-active">Meus horários</a>
+      }
+      <a routerLink="/sobre" routerLinkActive="is-active">Sobre</a>
+      <a routerLink="/contato" routerLinkActive="is-active">Contato</a>
+
+      <div class="nav__actions">
+        @if (auth.isAuthenticated()) {
+          <span class="nav__user">{{ auth.session()?.nome }}</span>
+          <button type="button" class="btn btn--ghost" (click)="logout()">Sair</button>
+        } @else {
+          <a routerLink="/login" class="btn btn--gold">Entrar</a>
+        }
+      </div>
+    </nav>
+  </header>
+
+  <main class="site__main">
+    <router-outlet />
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Barbearia Singer</p>
+  </footer>
+</div>

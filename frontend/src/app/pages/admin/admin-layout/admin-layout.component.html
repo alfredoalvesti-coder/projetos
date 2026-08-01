@@ -1,0 +1,21 @@
+<div class="admin-shell" [class.menu-open]="menuOpen()">
+  <app-sidebar [open]="menuOpen()" (closeMenu)="closeMenu()" />
+
+  <button
+    type="button"
+    class="admin-shell__backdrop"
+    aria-label="Fechar menu"
+    (click)="closeMenu()"
+  ></button>
+
+  <div class="admin-shell__main">
+    <app-header
+      [userName]="userName"
+      (menuToggle)="toggleMenu()"
+      (newAppointment)="onNewAppointment()"
+    />
+    <div class="admin-shell__content">
+      <router-outlet />
+    </div>
+  </div>
+</div>

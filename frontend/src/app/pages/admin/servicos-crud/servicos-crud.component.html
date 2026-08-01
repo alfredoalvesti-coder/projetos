@@ -1,0 +1,99 @@
+<div class="admin">
+  <header class="admin__top">
+    <div>
+      <p class="eyebrow">Painel</p>
+      <h1>Administração</h1>
+      <p class="subtitle">Olá, {{ auth.session()?.nome }} — gerencie os serviços da Barbearia Singer.</p>
+    </div>
+    <button type="button" class="btn btn--ghost" (click)="auth.logout()">Sair</button>
+  </header>
+
+  <section class="panel">
+    <header class="panel__head">
+      <h2>{{ editingId() ? 'Editar serviço' : 'Novo serviço' }}</h2>
+      @if (editingId()) {
+        <button type="button" class="link" (click)="cancelarEdicao()">Cancelar edição</button>
+      }
+    </header>
+
+    @if (errorMessage()) {
+      <p class="feedback feedback--error" role="alert">{{ errorMessage() }}</p>
+    }
+    @if (successMessage()) {
+      <p class="feedback feedback--ok">{{ successMessage() }}</p>
+    }
+
+    <form class="form" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <label class="field" [class.is-invalid]="campoInvalido('nome')">
+        <span>Nome *</span>
+        <input type="text" formControlName="nome" maxlength="80" autocomplete="off" />
+      </label>
+
+      <label class="field" [class.is-invalid]="campoInvalido('descricao')">
+        <span>Descrição *</span>
+        <textarea formControlName="descricao" rows="3" maxlength="500"></textarea>
+      </label>
+
+      <div class="row">
+        <label class="field" [class.is-invalid]="campoInvalido('duracaoMinutos')">
+          <span>Duração (min) *</span>
+          <input type="number" formControlName="duracaoMinutos" min="5" step="5" />
+        </label>
+
+        <label class="field" [class.is-invalid]="campoInvalido('preco')">
+          <span>Preço (R$) *</span>
+          <input type="number" formControlName="preco" min="0" step="0.01" />
+        </label>
+      </div>
+
+      <div class="form__actions">
+        <button type="submit" class="btn" [disabled]="saving()">
+          {{ saving() ? 'Salvando...' : editingId() ? 'Salvar alterações' : 'Cadastrar serviço' }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <header class="panel__head">
+      <h2>Serviços cadastrados</h2>
+      <button type="button" class="link" (click)="carregar()" [disabled]="loading()">Atualizar</button>
+    </header>
+
+    @if (loading()) {
+      <p class="muted">Carregando...</p>
+    } @else if (servicos().length === 0) {
+      <p class="muted">Nenhum serviço cadastrado ainda.</p>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Duração</th>
+              <th>Preço</th>
+              <th>Descrição</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (servico of servicos(); track servico.id) {
+              <tr [class.is-editing]="editingId() === servico.id">
+                <td data-label="Nome">{{ servico.nome }}</td>
+                <td data-label="Duração">{{ formatarDuracao(servico.duracaoMinutos) }}</td>
+                <td data-label="Preço">{{ formatarPreco(servico.preco) }}</td>
+                <td data-label="Descrição" class="desc">{{ servico.descricao }}</td>
+                <td class="actions">
+                  <button type="button" class="btn btn--small" (click)="editar(servico)">Editar</button>
+                  <button type="button" class="btn btn--small btn--danger" (click)="excluir(servico)">
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

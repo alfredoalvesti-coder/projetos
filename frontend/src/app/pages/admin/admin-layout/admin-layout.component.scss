@@ -1,0 +1,41 @@
+.admin-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse 70% 45% at 85% -10%, rgba(212, 175, 55, 0.08), transparent 50%),
+    #0f0f0f;
+  color: #fff;
+}
+
+.admin-shell__main {
+  margin-left: 17.5rem;
+  min-height: 100dvh;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+}
+
+.admin-shell__content {
+  max-width: 1180px;
+}
+
+.admin-shell__backdrop {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .admin-shell__main {
+    margin-left: 0;
+  }
+
+  .admin-shell__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: none;
+    border: 0;
+    background: rgba(0, 0, 0, 0.55);
+    cursor: pointer;
+  }
+
+  .admin-shell.menu-open .admin-shell__backdrop {
+    display: block;
+  }
+}

@@ -1,0 +1,30 @@
+<section class="page">
+  <header class="page__head">
+    <h1>Serviços</h1>
+    <p>Escolha o que combina com você e agende com tranquilidade.</p>
+  </header>
+
+  @if (loading()) {
+    <p class="state">Carregando serviços...</p>
+  } @else if (errorMessage()) {
+    <p class="state state--error">{{ errorMessage() }}</p>
+  } @else if (servicos().length === 0) {
+    <p class="state">Nenhum serviço disponível no momento.</p>
+  } @else {
+    <div class="list">
+      @for (servico of servicos(); track servico.id) {
+        <article class="item">
+          <div>
+            <h2>{{ servico.nome }}</h2>
+            <p>{{ servico.descricao }}</p>
+            <span class="meta">{{ formatarDuracao(servico.duracaoMinutos) }}</span>
+          </div>
+          <div class="item__side">
+            <strong>{{ formatarPreco(servico.preco) }}</strong>
+            <a routerLink="/agendamento" [queryParams]="{ servico: servico.nome }">Agendar</a>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

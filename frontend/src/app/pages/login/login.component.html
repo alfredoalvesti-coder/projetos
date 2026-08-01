@@ -1,0 +1,131 @@
+<section class="auth">
+  <aside class="auth__hero">
+    <div class="auth__hero-media"></div>
+    <div class="auth__hero-overlay"></div>
+    <div class="auth__hero-content">
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M6 4h3v16H6V4Zm9 0h3v16h-3V4ZM4 9h16v2H4V9Zm0 4h16v2H4v-2Z" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand__name">Barbearia Singer</span>
+      </div>
+      <h2 class="auth__hero-title">Corte, barba e estilo. Agende o seu horário.</h2>
+    </div>
+  </aside>
+
+  <div class="auth__panel">
+    <div class="auth__card">
+      @if (mode() === 'login') {
+        <header class="auth__header">
+          <h1>Bem-vindo</h1>
+          <p>Entre na sua conta para continuar.</p>
+        </header>
+
+        @if (errorMessage()) {
+          <p class="feedback feedback--error" role="alert">{{ errorMessage() }}</p>
+        }
+        @if (successMessage()) {
+          <p class="feedback feedback--success">{{ successMessage() }}</p>
+        }
+
+        <form class="auth__form" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+          <label class="field">
+            <span>Email</span>
+            <input type="email" formControlName="email" autocomplete="email" placeholder="voce@email.com" />
+          </label>
+
+          <label class="field">
+            <span>Senha</span>
+            <div class="field__password">
+              <input
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="senha"
+                autocomplete="current-password"
+                placeholder="••••••••"
+              />
+              <button type="button" class="field__toggle" (click)="togglePassword()" [attr.aria-pressed]="showPassword()">
+                {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
+              </button>
+            </div>
+          </label>
+
+          <div class="auth__row">
+            <label class="check">
+              <input type="checkbox" formControlName="lembrar" />
+              <span>Lembrar de mim</span>
+            </label>
+            <a href="#" class="link" (click)="onForgotPassword($event)">Esqueci minha senha</a>
+          </div>
+
+          <button class="btn btn--primary" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Entrando…' : 'Entrar' }}
+          </button>
+        </form>
+
+        <div class="divider" role="separator"><span>ou</span></div>
+
+        <button class="btn btn--secondary" type="button" (click)="onGoogleLogin()">
+          <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M12 10.2v3.6h5.1c-.2 1.2-.9 2.3-1.9 3l3.1 2.4c1.8-1.7 2.9-4.1 2.9-7 0-.7-.1-1.3-.2-1.9H12z"/>
+            <path fill="#34A853" d="M6.6 14.3l-.5.4-2.3 1.8C5.4 19.3 8.5 21 12 21c2.4 0 4.4-.8 5.9-2.2l-3.1-2.4c-.8.6-1.9.9-2.8.9-2.2 0-4-1.5-4.7-3.5z"/>
+            <path fill="#4A90E2" d="M4 7.5C3.4 8.7 3 10 3 11.5s.4 2.8 1 4l2.8-2.2c-.2-.5-.3-1.1-.3-1.8 0-.7.1-1.3.3-1.8L4 7.5z"/>
+            <path fill="#FBBC05" d="M12 5.5c1.3 0 2.5.5 3.4 1.3l2.5-2.5C16.4 2.8 14.4 2 12 2 8.5 2 5.4 3.7 3.8 6.3L6.6 8.5C7.3 6.5 9.1 5.5 12 5.5z"/>
+          </svg>
+          Entrar com Google
+        </button>
+
+        <p class="auth__switch">
+          Ainda não tem conta?
+          <button type="button" class="link link--strong" (click)="setMode('register')">Criar conta</button>
+        </p>
+      } @else {
+        <header class="auth__header">
+          <h1>Criar conta</h1>
+          <p>Cadastre-se para agendar seu horário.</p>
+        </header>
+
+        @if (errorMessage()) {
+          <p class="feedback feedback--error" role="alert">{{ errorMessage() }}</p>
+        }
+
+        <form class="auth__form" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+          <label class="field">
+            <span>Nome</span>
+            <input type="text" formControlName="nome" autocomplete="name" placeholder="Seu nome" />
+          </label>
+          <label class="field">
+            <span>Email</span>
+            <input type="email" formControlName="email" autocomplete="email" placeholder="voce@email.com" />
+          </label>
+          <label class="field">
+            <span>Senha</span>
+            <div class="field__password">
+              <input
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="senha"
+                autocomplete="new-password"
+                placeholder="mínimo 6 caracteres"
+              />
+              <button type="button" class="field__toggle" (click)="togglePassword()">
+                {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
+              </button>
+            </div>
+          </label>
+
+          <button class="btn btn--primary" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Criando…' : 'Criar conta' }}
+          </button>
+        </form>
+
+        <p class="auth__switch">
+          Já tem conta?
+          <button type="button" class="link link--strong" (click)="setMode('login')">Entrar</button>
+        </p>
+      }
+
+      <footer class="auth__footer">© 2026 Barbearia Singer</footer>
+    </div>
+  </div>
+</section>

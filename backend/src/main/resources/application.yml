@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: barbearia-singer
+  datasource:
+    url: jdbc:postgresql://localhost:5432/barbearia_singer
+    username: barbearia
+    password: barbearia
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: BarbeariaSingerJwtSecretKey2026SecureTokenMustBeLongEnoughForHS256
+    expiration-ms: 86400000

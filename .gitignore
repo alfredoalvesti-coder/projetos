@@ -1,12 +1,15 @@
-target/
+# Root
 .idea/
 *.iml
-*.ipr
-*.iws
-.classpath
-.project
-.settings/
 .vscode/
-*.class
 *.log
 .DS_Store
+
+# Backend
+backend/target/
+backend/.idea/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/

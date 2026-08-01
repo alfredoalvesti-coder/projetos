@@ -1,0 +1,170 @@
+<section class="page">
+  <header class="page__head">
+    <div>
+      <h1>Meus agendamentos</h1>
+      <p>Veja os próximos horários, remarque ou cancele com facilidade.</p>
+    </div>
+    <a routerLink="/agendamento" class="btn btn--primary">Novo agendamento</a>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Filtro de agendamentos">
+    <button
+      type="button"
+      role="tab"
+      class="tabs__btn"
+      [class.is-active]="aba() === 'proximos'"
+      (click)="setAba('proximos')"
+    >
+      Próximos
+      <span>{{ proximos().length }}</span>
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="tabs__btn"
+      [class.is-active]="aba() === 'historico'"
+      (click)="setAba('historico')"
+    >
+      Histórico
+      <span>{{ historico().length }}</span>
+    </button>
+  </div>
+
+  @if (successMessage()) {
+    <p class="feedback feedback--ok">{{ successMessage() }}</p>
+  }
+  @if (errorMessage()) {
+    <p class="feedback feedback--error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <div class="empty">Carregando seus horários…</div>
+  } @else if (listaAtual().length === 0) {
+    <div class="empty">
+      @if (aba() === 'proximos') {
+        <h2>Nenhum horário à frente</h2>
+        <p>Quando você agendar, seus próximos compromissos aparecem aqui.</p>
+        <a routerLink="/agendamento" class="btn btn--primary">Agendar agora</a>
+      } @else {
+        <h2>Histórico vazio</h2>
+        <p>Agendamentos passados ou cancelados vão aparecer nesta aba.</p>
+      }
+    </div>
+  } @else {
+    <div class="list">
+      @for (item of listaAtual(); track item.id) {
+        <article class="card">
+          <div class="card__main">
+            <div class="card__time">
+              <strong>{{ item.horario }}</strong>
+              <span>{{ formatarData(item.data) }}</span>
+            </div>
+            <div class="card__info">
+              <h2>{{ item.servico }}</h2>
+              <p>com {{ item.barbeiro }}</p>
+              @if (item.observacao) {
+                <p class="note">{{ item.observacao }}</p>
+              }
+            </div>
+          </div>
+
+          <div class="card__side">
+            <span class="badge" [attr.data-status]="item.status">{{ statusLabel(item.status) }}</span>
+
+            @if (podeGerenciar(item)) {
+              <div class="actions">
+                <button type="button" class="btn btn--primary" (click)="abrirEdicao(item)">Remarcar</button>
+                <button type="button" class="btn btn--quiet" (click)="pedirCancelamento(item)">Cancelar</button>
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+@if (editando(); as item) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="edit-title">
+    <div class="modal__backdrop" (click)="fecharEdicao()"></div>
+    <div class="modal__panel">
+      <header>
+        <h2 id="edit-title">Remarcar horário</h2>
+        <p>Altere o que precisar e confirme. O horário antigo só libera depois da atualização.</p>
+      </header>
+
+      <form class="form" [formGroup]="form" (ngSubmit)="salvarEdicao()">
+        <label class="field">
+          <span>Serviço</span>
+          <select formControlName="servico">
+            @for (servico of servicos; track servico) {
+              <option [value]="servico">{{ servico }}</option>
+            }
+          </select>
+        </label>
+        <label class="field">
+          <span>Barbeiro</span>
+          <select formControlName="barbeiro">
+            @for (barbeiro of barbeiros; track barbeiro) {
+              <option [value]="barbeiro">{{ barbeiro }}</option>
+            }
+          </select>
+        </label>
+        <div class="row">
+          <label class="field">
+            <span>Data</span>
+            <input type="date" formControlName="data" />
+          </label>
+          <label class="field">
+            <span>Horário</span>
+            <select formControlName="horario">
+              <option value="" disabled>
+                @if (loadingHorarios()) {
+                  Carregando…
+                } @else if (horariosDisponiveis().length === 0) {
+                  Sem horários livres
+                } @else {
+                  Selecione
+                }
+              </option>
+              @for (horario of horariosDisponiveis(); track horario) {
+                <option [value]="horario">{{ horario }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        <label class="field">
+          <span>Observação</span>
+          <textarea formControlName="observacao" rows="3"></textarea>
+        </label>
+
+        <div class="modal__actions">
+          <button type="button" class="btn btn--quiet" (click)="fecharEdicao()">Voltar</button>
+          <button type="submit" class="btn btn--primary" [disabled]="saving()">
+            {{ saving() ? 'Salvando…' : 'Salvar alteração' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (cancelando(); as item) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cancel-title">
+    <div class="modal__backdrop" (click)="fecharCancelamento()"></div>
+    <div class="modal__panel">
+      <header>
+        <h2 id="cancel-title">Cancelar agendamento?</h2>
+        <p>
+          {{ item.servico }} com {{ item.barbeiro }} em {{ formatarData(item.data) }} às {{ item.horario }}.
+        </p>
+      </header>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--quiet" (click)="fecharCancelamento()">Manter horário</button>
+        <button type="button" class="btn btn--danger" [disabled]="saving()" (click)="confirmarCancelamento()">
+          {{ saving() ? 'Cancelando…' : 'Confirmar cancelamento' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,18 @@
+<section class="page">
+  <header class="page__head">
+    <h1>Barbeiros</h1>
+    <p>Conheça quem cuida do seu visual na Barbearia Singer.</p>
+  </header>
+
+  <div class="grid">
+    @for (barbeiro of barbeiros; track barbeiro.nome) {
+      <article class="card">
+        <div class="avatar" aria-hidden="true">{{ barbeiro.nome.charAt(0) }}</div>
+        <h2>{{ barbeiro.nome }}</h2>
+        <p class="tag">{{ barbeiro.especialidade }}</p>
+        <p>{{ barbeiro.bio }}</p>
+        <a routerLink="/agendamento">Agendar com {{ barbeiro.nome.split(' ')[0] }}</a>
+      </article>
+    }
+  </div>
+</section>

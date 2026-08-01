@@ -1,0 +1,141 @@
+.list-panel {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  background: #161616;
+  overflow: hidden;
+}
+
+.list-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.list-panel__head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.list-panel__count {
+  color: #d4af37;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.list-panel__empty {
+  margin: 0;
+  padding: 1.5rem 1.25rem;
+  color: #888;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+}
+
+.row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.85rem 0.9rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.row:hover {
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.row__avatar {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.row__main {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.row__name {
+  font-weight: 600;
+  color: #fff;
+}
+
+.row__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #8f8f8f;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row__side {
+  display: grid;
+  justify-items: end;
+  gap: 0.2rem;
+}
+
+.row__time {
+  font-weight: 600;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.row__status {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+.row__status[data-status='confirmado'] {
+  color: #d4af37;
+}
+
+.row__status[data-status='em_atendimento'] {
+  color: #7ec8a3;
+}
+
+.row__price {
+  color: #9a9a9a;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .row__side {
+    grid-column: 2;
+    justify-items: start;
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 0.65rem;
+  }
+}

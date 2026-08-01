@@ -1,0 +1,224 @@
+.page {
+  padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 4vw, 2.5rem);
+  max-width: 720px;
+}
+
+.page__head {
+  margin-bottom: 1.5rem;
+}
+
+.page__head h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  letter-spacing: -0.03em;
+}
+
+.page__head p {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+
+.notice {
+  border: 1px solid #2a2a2a;
+  background: var(--card);
+  border-radius: 1rem;
+  padding: 1.35rem;
+}
+
+.notice--ok {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+.notice h2 {
+  margin: 0 0 0.5rem;
+}
+
+.notice p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.form {
+  display: grid;
+  gap: 1rem;
+  border: 1px solid #2a2a2a;
+  background: var(--card);
+  border-radius: 1rem;
+  padding: 1.35rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.field.is-invalid > span {
+  color: #ff9b9b;
+}
+
+.field.is-invalid select,
+.field.is-invalid .date-field,
+.date-field.is-invalid {
+  border-color: rgba(255, 110, 110, 0.7);
+  box-shadow: 0 0 0 3px rgba(255, 80, 80, 0.12);
+}
+
+.field__error {
+  color: #ff9b9b;
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.field__hint {
+  color: #e6c65c;
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid #3a3a3a;
+  border-radius: 0.7rem;
+  background: #1f1f1f;
+  color: var(--text);
+  padding: 0.8rem 0.9rem;
+  outline: none;
+  color-scheme: dark;
+}
+
+.field input[type='date'] {
+  background: transparent;
+  color: #ffffff;
+  min-height: 3rem;
+  border: 0;
+  padding: 0.8rem 0.9rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.field input[type='date']::-webkit-calendar-picker-indicator {
+  display: none;
+  appearance: none;
+}
+
+.date-field {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid #3a3a3a;
+  border-radius: 0.7rem;
+  background: #2a2a2a;
+  padding-right: 0.35rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.date-field:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.date-field__btn {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  border-radius: 0.55rem;
+  background: rgba(212, 175, 55, 0.12);
+  color: #d4af37;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.date-field__btn:hover {
+  background: rgba(212, 175, 55, 0.22);
+  transform: scale(1.04);
+}
+
+.date-field__btn svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: block;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.date-field input:focus {
+  border: 0;
+  box-shadow: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border-radius: 0.7rem;
+  border: 1px solid var(--gold);
+  background: #0a0a0a;
+  color: var(--gold);
+  font-weight: 600;
+  padding: 0.85rem 1.1rem;
+  cursor: pointer;
+}
+
+.btn--primary {
+  width: 100%;
+}
+
+.btn--ghost {
+  border-color: #333;
+  background: transparent;
+  color: var(--muted);
+}
+
+.notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.notice__actions .btn {
+  width: auto;
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.feedback {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.65rem;
+  background: rgba(255, 80, 80, 0.08);
+  border: 1px solid rgba(255, 80, 80, 0.2);
+  color: #ff9b9b;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
