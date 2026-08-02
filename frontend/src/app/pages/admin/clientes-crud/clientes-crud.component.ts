@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   LucideCalendarPlus,
   LucideEye,
@@ -41,6 +42,7 @@ type ModalMode = 'create' | 'edit' | 'view';
 })
 export class ClientesCrudComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
   private readonly clienteApi = inject(ClienteService);
   private readonly toast = inject(ToastService);
 
@@ -230,7 +232,9 @@ export class ClientesCrudComponent implements OnInit {
   }
 
   novoAgendamento(cliente: ClienteResponse): void {
-    this.toast.info(`Em breve: agendar para ${cliente.nome}.`);
+    void this.router.navigate(['/admin/agendamentos'], {
+      queryParams: { novo: '1', clienteId: cliente.id }
+    });
   }
 
   campoInvalido(nome: 'nome' | 'telefone' | 'email' | 'dataNascimento' | 'observacoes'): boolean {

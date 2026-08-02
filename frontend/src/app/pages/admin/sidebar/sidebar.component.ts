@@ -55,7 +55,7 @@ export class SidebarComponent {
 
   readonly items: AdminNavItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/admin/dashboard' },
-    { label: 'Agendamentos', icon: 'appointments', disabled: true },
+    { label: 'Agendamentos', icon: 'appointments', route: '/admin/agendamentos' },
     { label: 'Serviços', icon: 'services', route: '/admin/servicos' },
     { label: 'Barbeiros', icon: 'barbers', route: '/admin/barbeiros' },
     { label: 'Clientes', icon: 'clients', route: '/admin/clientes' },

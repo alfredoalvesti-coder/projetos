@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.barbearia.singer.agendamento.dto.AdminAgendamentoRequest;
 import com.barbearia.singer.agendamento.dto.AgendamentoResponse;
 import com.barbearia.singer.agendamento.dto.CreateAgendamentoRequest;
 import com.barbearia.singer.security.UsuarioPrincipal;
@@ -30,6 +31,28 @@ public class AgendamentoController {
 
     public AgendamentoController(AgendamentoService agendamentoService) {
         this.agendamentoService = agendamentoService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AgendamentoResponse>> listarTodos() {
+        return ResponseEntity.ok(agendamentoService.listarTodos());
+    }
+
+    @PostMapping("/admin")
+    public ResponseEntity<AgendamentoResponse> criarAdmin(@Valid @RequestBody AdminAgendamentoRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(agendamentoService.criarAdmin(request));
+    }
+
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<AgendamentoResponse> atualizarAdmin(
+            @PathVariable Long id,
+            @Valid @RequestBody AdminAgendamentoRequest request) {
+        return ResponseEntity.ok(agendamentoService.atualizarAdmin(id, request));
+    }
+
+    @PostMapping("/admin/{id}/cancelar")
+    public ResponseEntity<AgendamentoResponse> cancelarAdmin(@PathVariable Long id) {
+        return ResponseEntity.ok(agendamentoService.cancelarAdmin(id));
     }
 
     @PostMapping

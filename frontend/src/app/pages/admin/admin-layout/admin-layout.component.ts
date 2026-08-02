@@ -33,6 +33,9 @@ export class AdminLayoutComponent {
 
   readonly pageTitle = computed(() => {
     const url = this.currentUrl();
+    if (url.includes('/admin/agendamentos')) {
+      return '';
+    }
     if (url.includes('/admin/servicos')) {
       return 'Serviços';
     }
@@ -47,6 +50,9 @@ export class AdminLayoutComponent {
 
   readonly pageSubtitle = computed(() => {
     const url = this.currentUrl();
+    if (url.includes('/admin/agendamentos')) {
+      return '';
+    }
     if (url.includes('/admin/servicos')) {
       return 'Cadastro e gestão dos serviços da barbearia';
     }
@@ -68,6 +74,6 @@ export class AdminLayoutComponent {
   }
 
   onNewAppointment(): void {
-    // Visual only in this step
+    void this.router.navigate(['/admin/agendamentos'], { queryParams: { novo: '1' } });
   }
 }

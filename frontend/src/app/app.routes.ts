@@ -61,6 +61,13 @@ export const routes: Routes = [
           import('./pages/admin/dashboard/dashboard.component').then((m) => m.DashboardComponent)
       },
       {
+        path: 'agendamentos',
+        loadComponent: () =>
+          import('./pages/admin/agendamentos-crud/agendamentos-crud.component').then(
+            (m) => m.AgendamentosCrudComponent
+          )
+      },
+      {
         path: 'servicos',
         loadComponent: () =>
           import('./pages/admin/servicos-crud/servicos-crud.component').then(

@@ -5,10 +5,14 @@ import java.time.LocalDate;
 
 import com.barbearia.singer.agendamento.Agendamento;
 import com.barbearia.singer.agendamento.StatusAgendamento;
+import com.barbearia.singer.user.Usuario;
 
 public class AgendamentoResponse {
 
     private Long id;
+    private Long clienteId;
+    private String clienteNome;
+    private String clienteTelefone;
     private String servico;
     private String barbeiro;
     private LocalDate data;
@@ -22,6 +26,12 @@ public class AgendamentoResponse {
 
     public AgendamentoResponse(Agendamento agendamento) {
         this.id = agendamento.getId();
+        Usuario usuario = agendamento.getUsuario();
+        if (usuario != null) {
+            this.clienteId = usuario.getId();
+            this.clienteNome = usuario.getNome();
+            this.clienteTelefone = usuario.getTelefone();
+        }
         this.servico = agendamento.getServico();
         this.barbeiro = agendamento.getBarbeiro();
         this.data = agendamento.getData();
@@ -37,6 +47,30 @@ public class AgendamentoResponse {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+
+    public String getClienteNome() {
+        return clienteNome;
+    }
+
+    public void setClienteNome(String clienteNome) {
+        this.clienteNome = clienteNome;
+    }
+
+    public String getClienteTelefone() {
+        return clienteTelefone;
+    }
+
+    public void setClienteTelefone(String clienteTelefone) {
+        this.clienteTelefone = clienteTelefone;
     }
 
     public String getServico() {

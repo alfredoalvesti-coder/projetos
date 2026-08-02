@@ -1,0 +1,360 @@
+<section class="appointments">
+  <header class="appointments__head">
+    <div>
+      <h2>Agendamentos</h2>
+      <p>Gerencie a agenda da barbearia</p>
+    </div>
+    <button type="button" class="btn btn--primary" (click)="openCreate()">
+      <svg lucidePlus [size]="18"></svg>
+      Novo Agendamento
+    </button>
+  </header>
+
+  <div class="toolbar">
+    <label class="search">
+      <svg lucideSearch [size]="18"></svg>
+      <input
+        type="search"
+        placeholder="Buscar por cliente, telefone, serviço, barbeiro..."
+        [value]="search()"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </label>
+    <span class="toolbar__count">{{ totalFiltrados() }} cadastrados</span>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-panel" aria-hidden="true">
+      @for (row of [1, 2, 3, 4, 5]; track row) {
+        <div class="skeleton-row">
+          <span class="sk sk--avatar"></span>
+          <span class="sk sk--line"></span>
+          <span class="sk sk--line sk--short"></span>
+          <span class="sk sk--line"></span>
+          <span class="sk sk--line sk--short"></span>
+        </div>
+      }
+    </div>
+  } @else if (filtrados().length === 0) {
+    <div class="empty">
+      <div class="empty__icon" aria-hidden="true">
+        <svg lucideCalendarDays [size]="28"></svg>
+      </div>
+      @if (search()) {
+        <h3>Nenhum resultado</h3>
+        <p>Não encontramos agendamentos para “{{ search() }}”.</p>
+        <button type="button" class="btn btn--ghost" (click)="onSearch('')">Limpar busca</button>
+      } @else {
+        <h3>Nenhum agendamento ainda</h3>
+        <p>Crie o primeiro agendamento para organizar a agenda da equipe.</p>
+        <button type="button" class="btn btn--primary" (click)="openCreate()">
+          <svg lucidePlus [size]="18"></svg>
+          Novo Agendamento
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="table-wrap desktop-only">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Telefone</th>
+            <th>Serviço</th>
+            <th>Barbeiro</th>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Status</th>
+            <th class="col-actions">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of pageItems(); track item.id) {
+            <tr>
+              <td>
+                <div class="person">
+                  <span class="avatar">{{ initials(item.clienteNome || '?') }}</span>
+                  <strong>{{ item.clienteNome || '—' }}</strong>
+                </div>
+              </td>
+              <td>{{ item.clienteTelefone || '—' }}</td>
+              <td>{{ item.servico }}</td>
+              <td>{{ item.barbeiro }}</td>
+              <td>{{ formatarDataBr(item.data) }}</td>
+              <td>{{ item.horario }}</td>
+              <td>
+                <span class="badge" [attr.data-status]="item.status">
+                  {{ statusLabel(item.status) }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <div class="actions">
+                  <button
+                    type="button"
+                    class="action-btn action-btn--view"
+                    title="Visualizar"
+                    aria-label="Visualizar"
+                    (click)="openView(item)"
+                  >
+                    <svg lucideEye [size]="16"></svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="action-btn action-btn--edit"
+                    title="Editar"
+                    aria-label="Editar"
+                    [disabled]="item.status === 'CANCELADO'"
+                    (click)="openEdit(item)"
+                  >
+                    <svg lucidePencil [size]="16"></svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="action-btn action-btn--delete"
+                    title="Cancelar"
+                    aria-label="Cancelar"
+                    [disabled]="item.status === 'CANCELADO'"
+                    (click)="askCancel(item)"
+                  >
+                    <svg lucideXCircle [size]="16"></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cards mobile-only">
+      @for (item of pageItems(); track item.id) {
+        <article class="card">
+          <header class="card__head">
+            <div class="person">
+              <span class="avatar">{{ initials(item.clienteNome || '?') }}</span>
+              <div>
+                <strong>{{ item.clienteNome || '—' }}</strong>
+                <span class="badge" [attr.data-status]="item.status">
+                  {{ statusLabel(item.status) }}
+                </span>
+              </div>
+            </div>
+            <div class="actions">
+              <button
+                type="button"
+                class="action-btn action-btn--view"
+                title="Visualizar"
+                aria-label="Visualizar"
+                (click)="openView(item)"
+              >
+                <svg lucideEye [size]="16"></svg>
+              </button>
+              <button
+                type="button"
+                class="action-btn action-btn--edit"
+                title="Editar"
+                aria-label="Editar"
+                [disabled]="item.status === 'CANCELADO'"
+                (click)="openEdit(item)"
+              >
+                <svg lucidePencil [size]="16"></svg>
+              </button>
+              <button
+                type="button"
+                class="action-btn action-btn--delete"
+                title="Cancelar"
+                aria-label="Cancelar"
+                [disabled]="item.status === 'CANCELADO'"
+                (click)="askCancel(item)"
+              >
+                <svg lucideXCircle [size]="16"></svg>
+              </button>
+            </div>
+          </header>
+          <dl class="card__meta">
+            <div>
+              <dt>Telefone</dt>
+              <dd>{{ item.clienteTelefone || '—' }}</dd>
+            </div>
+            <div>
+              <dt>Serviço</dt>
+              <dd>{{ item.servico }}</dd>
+            </div>
+            <div>
+              <dt>Barbeiro</dt>
+              <dd>{{ item.barbeiro }}</dd>
+            </div>
+            <div>
+              <dt>Quando</dt>
+              <dd>{{ formatarDataBr(item.data) }} · {{ item.horario }}</dd>
+            </div>
+          </dl>
+        </article>
+      }
+    </div>
+
+    <footer class="pager">
+      <p>{{ rangeLabel() }}</p>
+      <div class="pager__actions">
+        <button type="button" class="btn btn--ghost" [disabled]="paginaAtual() <= 1" (click)="prevPage()">
+          Anterior
+        </button>
+        <span>{{ paginaAtual() }} / {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          class="btn btn--ghost"
+          [disabled]="paginaAtual() >= totalPaginas()"
+          (click)="nextPage()"
+        >
+          Próxima
+        </button>
+      </div>
+    </footer>
+  }
+</section>
+
+@if (modalOpen()) {
+  <div class="overlay" (click)="closeModal()">
+    <div
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="modalTitle()"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="modal__head">
+        <div>
+          <p class="eyebrow">Agendamentos</p>
+          <h3>{{ modalTitle() }}</h3>
+        </div>
+        <button type="button" class="icon-btn" aria-label="Fechar" (click)="closeModal()">
+          <svg lucideX [size]="18"></svg>
+        </button>
+      </header>
+
+      <form class="modal__form" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+        <label class="field" [class.is-invalid]="campoInvalido('clienteId')">
+          <span>Cliente *</span>
+          <select formControlName="clienteId">
+            <option [ngValue]="null">
+              {{ clientesAtivos().length ? 'Selecione um cliente' : 'Nenhum cliente cadastrado' }}
+            </option>
+            @for (cliente of clientesAtivos(); track cliente.id) {
+              <option [ngValue]="cliente.id">
+                {{ cliente.nome }} — {{ cliente.telefone || 'sem telefone' }}
+              </option>
+            }
+          </select>
+        </label>
+
+        <label class="field" [class.is-invalid]="campoInvalido('servico')">
+          <span>Serviço *</span>
+          <select formControlName="servico">
+            <option value="">Selecione um serviço</option>
+            @for (servico of servicos(); track servico.id) {
+              <option [value]="servico.nome">{{ servico.nome }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field" [class.is-invalid]="campoInvalido('barbeiro')">
+          <span>Barbeiro *</span>
+          <select formControlName="barbeiro">
+            <option value="">Selecione um barbeiro</option>
+            @for (barbeiro of barbeiros(); track barbeiro.id) {
+              <option [value]="barbeiro.nome">{{ barbeiro.nome }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="row">
+          <label class="field" [class.is-invalid]="campoInvalido('data')">
+            <span>Data *</span>
+            <div class="date-field">
+              <input
+                #dataInput
+                type="date"
+                formControlName="data"
+                [attr.min]="minData"
+              />
+              <button
+                type="button"
+                class="date-field__btn"
+                aria-label="Abrir calendário"
+                [disabled]="isViewMode()"
+                (click)="abrirCalendario(dataInput)"
+              >
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M3 9h18" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </label>
+
+          <label class="field" [class.is-invalid]="campoInvalido('horario')">
+            <span>Horário *</span>
+            <select formControlName="horario">
+              <option value="">
+                {{ loadingHorarios() ? 'Carregando...' : 'Selecione' }}
+              </option>
+              @for (horario of horariosDisponiveis(); track horario) {
+                <option [value]="horario">{{ horario }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <label class="field" [class.is-invalid]="campoInvalido('observacao')">
+          <span>Observação</span>
+          <textarea
+            formControlName="observacao"
+            rows="3"
+            maxlength="500"
+            placeholder="Preferências ou detalhes do atendimento..."
+          ></textarea>
+        </label>
+
+        <label class="field">
+          <span>Status</span>
+          <select formControlName="status">
+            <option value="PENDENTE">Pendente</option>
+            <option value="CONFIRMADO">Confirmado</option>
+            @if (modalMode() !== 'create') {
+              <option value="CANCELADO">Cancelado</option>
+            }
+          </select>
+        </label>
+
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost" (click)="closeModal()">
+            {{ isViewMode() ? 'Fechar' : 'Cancelar' }}
+          </button>
+          @if (!isViewMode()) {
+            <button type="submit" class="btn btn--primary" [disabled]="saving()">
+              {{ saving() ? 'Salvando...' : modalMode() === 'edit' ? 'Salvar alterações' : 'Criar agendamento' }}
+            </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (confirmCancel(); as item) {
+  <div class="overlay" (click)="dismissCancel()">
+    <div class="confirm" role="alertdialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <h3>Cancelar agendamento?</h3>
+      <p>
+        Tem certeza que deseja cancelar o horário de
+        <strong>{{ item.clienteNome }}</strong>
+        em {{ formatarDataBr(item.data) }} às {{ item.horario }}?
+      </p>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" (click)="dismissCancel()">Voltar</button>
+        <button type="button" class="btn btn--danger" (click)="confirmCancelAction()">Cancelar agendamento</button>
+      </div>
+    </div>
+  </div>
+}

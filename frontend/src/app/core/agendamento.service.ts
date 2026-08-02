@@ -11,10 +11,23 @@ export interface CreateAgendamentoPayload {
   observacao?: string;
 }
 
+export interface AdminAgendamentoPayload {
+  clienteId: number;
+  servico: string;
+  barbeiro: string;
+  data: string;
+  horario: string;
+  observacao?: string;
+  status?: StatusAgendamento;
+}
+
 export type StatusAgendamento = 'PENDENTE' | 'CONFIRMADO' | 'CANCELADO';
 
 export interface AgendamentoResponse {
   id: number;
+  clienteId?: number;
+  clienteNome?: string;
+  clienteTelefone?: string | null;
   servico: string;
   barbeiro: string;
   data: string;
@@ -37,6 +50,22 @@ export class AgendamentoService {
     return this.http.get<AgendamentoResponse[]>(`${this.baseUrl}/me`);
   }
 
+  listarAdmin(): Observable<AgendamentoResponse[]> {
+    return this.http.get<AgendamentoResponse[]>(this.baseUrl);
+  }
+
+  criarAdmin(payload: AdminAgendamentoPayload): Observable<AgendamentoResponse> {
+    return this.http.post<AgendamentoResponse>(`${this.baseUrl}/admin`, payload);
+  }
+
+  atualizarAdmin(id: number, payload: AdminAgendamentoPayload): Observable<AgendamentoResponse> {
+    return this.http.put<AgendamentoResponse>(`${this.baseUrl}/admin/${id}`, payload);
+  }
+
+  cancelarAdmin(id: number): Observable<AgendamentoResponse> {
+    return this.http.post<AgendamentoResponse>(`${this.baseUrl}/admin/${id}/cancelar`, {});
+  }
+
   horariosOcupados(barbeiro: string, data: string, ignoreId?: number): Observable<string[]> {
     let params = new HttpParams().set('barbeiro', barbeiro).set('data', data);
     if (ignoreId != null) {
@@ -51,5 +80,16 @@ export class AgendamentoService {
 
   cancelar(id: number): Observable<AgendamentoResponse> {
     return this.http.post<AgendamentoResponse>(`${this.baseUrl}/${id}/cancelar`, {});
+  }
+}
+
+export function statusAgendamentoLabel(status: StatusAgendamento): string {
+  switch (status) {
+    case 'CONFIRMADO':
+      return 'Confirmado';
+    case 'CANCELADO':
+      return 'Cancelado';
+    default:
+      return 'Pendente';
   }
 }

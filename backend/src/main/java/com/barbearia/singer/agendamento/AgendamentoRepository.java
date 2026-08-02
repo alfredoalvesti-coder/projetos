@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.barbearia.singer.user.Usuario;
 
@@ -28,9 +30,29 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
             LocalDate data,
             StatusAgendamento status);
 
-    List<Agendamento> findByUsuarioOrderByDataDescHorarioDesc(Usuario usuario);
+    @Query("""
+            SELECT a FROM Agendamento a
+            JOIN FETCH a.usuario
+            WHERE a.usuario = :usuario
+            ORDER BY a.data DESC, a.horario DESC
+            """)
+    List<Agendamento> findByUsuarioOrderByDataDescHorarioDesc(@Param("usuario") Usuario usuario);
 
     Optional<Agendamento> findByIdAndUsuario(Long id, Usuario usuario);
+
+    @Query("""
+            SELECT a FROM Agendamento a
+            JOIN FETCH a.usuario
+            ORDER BY a.data DESC, a.horario DESC
+            """)
+    List<Agendamento> findAllWithUsuarioOrderByDataDescHorarioDesc();
+
+    @Query("""
+            SELECT a FROM Agendamento a
+            JOIN FETCH a.usuario
+            WHERE a.id = :id
+            """)
+    Optional<Agendamento> findByIdWithUsuario(@Param("id") Long id);
 
     boolean existsByUsuario(Usuario usuario);
 

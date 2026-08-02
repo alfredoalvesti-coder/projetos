@@ -6,19 +6,27 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.barbearia.singer.agendamento.dto.AdminAgendamentoRequest;
 import com.barbearia.singer.agendamento.dto.AgendamentoResponse;
 import com.barbearia.singer.agendamento.dto.CreateAgendamentoRequest;
+import com.barbearia.singer.user.Role;
 import com.barbearia.singer.user.Usuario;
+import com.barbearia.singer.user.UsuarioRepository;
 
 @Service
 public class AgendamentoService {
 
     private final AgendamentoRepository agendamentoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public AgendamentoService(AgendamentoRepository agendamentoRepository) {
+    public AgendamentoService(
+            AgendamentoRepository agendamentoRepository,
+            UsuarioRepository usuarioRepository) {
         this.agendamentoRepository = agendamentoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public AgendamentoResponse criar(Usuario usuario, CreateAgendamentoRequest request) {
@@ -33,8 +41,16 @@ public class AgendamentoService {
         return new AgendamentoResponse(agendamentoRepository.save(agendamento));
     }
 
+    @Transactional(readOnly = true)
     public List<AgendamentoResponse> listarDoUsuario(Usuario usuario) {
         return agendamentoRepository.findByUsuarioOrderByDataDescHorarioDesc(usuario).stream()
+                .map(AgendamentoResponse::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AgendamentoResponse> listarTodos() {
+        return agendamentoRepository.findAllWithUsuarioOrderByDataDescHorarioDesc().stream()
                 .map(AgendamentoResponse::new)
                 .toList();
     }
@@ -69,9 +85,65 @@ public class AgendamentoService {
         return new AgendamentoResponse(agendamentoRepository.save(agendamento));
     }
 
+    @Transactional
+    public AgendamentoResponse criarAdmin(AdminAgendamentoRequest request) {
+        Usuario cliente = buscarCliente(request.getClienteId());
+        validarDataFutura(request.getData(), request.getHorario());
+        garantirHorarioLivre(request.getBarbeiro(), request.getData(), request.getHorario(), null);
+
+        Agendamento agendamento = new Agendamento();
+        agendamento.setUsuario(cliente);
+        aplicarDadosAdmin(agendamento, request);
+        agendamento.setStatus(
+                request.getStatus() == null ? StatusAgendamento.PENDENTE : request.getStatus());
+
+        return new AgendamentoResponse(agendamentoRepository.save(agendamento));
+    }
+
+    @Transactional
+    public AgendamentoResponse atualizarAdmin(Long id, AdminAgendamentoRequest request) {
+        Agendamento agendamento = buscarComUsuario(id);
+        if (agendamento.getStatus() == StatusAgendamento.CANCELADO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este agendamento já foi cancelado");
+        }
+
+        Usuario cliente = buscarCliente(request.getClienteId());
+        validarDataFutura(request.getData(), request.getHorario());
+        garantirHorarioLivre(request.getBarbeiro(), request.getData(), request.getHorario(), id);
+
+        agendamento.setUsuario(cliente);
+        aplicarDadosAdmin(agendamento, request);
+        if (request.getStatus() != null) {
+            agendamento.setStatus(request.getStatus());
+        }
+
+        return new AgendamentoResponse(agendamentoRepository.save(agendamento));
+    }
+
+    @Transactional
+    public AgendamentoResponse cancelarAdmin(Long id) {
+        Agendamento agendamento = buscarComUsuario(id);
+        if (agendamento.getStatus() == StatusAgendamento.CANCELADO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este agendamento já foi cancelado");
+        }
+
+        agendamento.setStatus(StatusAgendamento.CANCELADO);
+        return new AgendamentoResponse(agendamentoRepository.save(agendamento));
+    }
+
     private Agendamento buscarDoUsuario(Long id, Usuario usuario) {
         return agendamentoRepository.findByIdAndUsuario(id, usuario)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+    }
+
+    private Agendamento buscarComUsuario(Long id) {
+        return agendamentoRepository.findByIdWithUsuario(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+    }
+
+    private Usuario buscarCliente(Long clienteId) {
+        return usuarioRepository.findByIdAndRole(clienteId, Role.CLIENTE)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
     }
 
     private void garantirEditavel(Agendamento agendamento) {
@@ -119,6 +191,17 @@ public class AgendamentoService {
     }
 
     private void aplicarDados(Agendamento agendamento, CreateAgendamentoRequest request) {
+        agendamento.setServico(request.getServico().trim());
+        agendamento.setBarbeiro(request.getBarbeiro().trim());
+        agendamento.setData(request.getData());
+        agendamento.setHorario(request.getHorario().trim());
+        agendamento.setObservacao(
+                request.getObservacao() == null || request.getObservacao().isBlank()
+                        ? null
+                        : request.getObservacao().trim());
+    }
+
+    private void aplicarDadosAdmin(Agendamento agendamento, AdminAgendamentoRequest request) {
         agendamento.setServico(request.getServico().trim());
         agendamento.setBarbeiro(request.getBarbeiro().trim());
         agendamento.setData(request.getData());

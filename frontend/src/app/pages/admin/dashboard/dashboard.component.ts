@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { LucideArrowUpRight, LucideSparkles } from '@lucide/angular';
 import { SummaryCardComponent } from '../shared/summary-card/summary-card.component';
 import {
@@ -14,6 +15,7 @@ import {
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+  private readonly router = inject(Router);
   readonly todayLabel = 'Sábado, 1 de agosto';
 
   readonly summary = {
@@ -74,6 +76,6 @@ export class DashboardComponent {
   readonly notice = signal('Movimento acima da média para o sábado. Cadeira 2 livre às 18h.');
 
   onNewAppointment(): void {
-    // Visual only — next step wires real flow
+    void this.router.navigate(['/admin/agendamentos'], { queryParams: { novo: '1' } });
   }
 }
