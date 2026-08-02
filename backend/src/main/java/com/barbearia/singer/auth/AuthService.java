@@ -14,6 +14,7 @@ import com.barbearia.singer.auth.dto.UserResponse;
 import com.barbearia.singer.security.JwtService;
 import com.barbearia.singer.security.UsuarioPrincipal;
 import com.barbearia.singer.user.Role;
+import com.barbearia.singer.user.StatusCliente;
 import com.barbearia.singer.user.Usuario;
 import com.barbearia.singer.user.UsuarioRepository;
 
@@ -47,7 +48,9 @@ public class AuthService {
         usuario.setNome(request.getNome().trim());
         usuario.setEmail(email);
         usuario.setSenha(passwordEncoder.encode(request.getSenha()));
+        usuario.setDataNascimento(request.getDataNascimento());
         usuario.setRole(Role.CLIENTE);
+        usuario.setStatus(StatusCliente.ATIVO);
 
         return new UserResponse(usuarioRepository.save(usuario));
     }

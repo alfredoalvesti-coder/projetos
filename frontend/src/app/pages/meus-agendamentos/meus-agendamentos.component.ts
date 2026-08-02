@@ -9,6 +9,8 @@ import {
   AgendamentoService,
   StatusAgendamento
 } from '../../core/agendamento.service';
+import { BarbeiroResponse, BarbeiroService } from '../../core/barbeiro.service';
+import { ServicoResponse, ServicoService } from '../../core/servico.service';
 
 type Aba = 'proximos' | 'historico';
 
@@ -23,6 +25,8 @@ export class MeusAgendamentosComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly agendamentoService = inject(AgendamentoService);
+  private readonly servicoApi = inject(ServicoService);
+  private readonly barbeiroApi = inject(BarbeiroService);
   private readonly destroyRef = inject(DestroyRef);
   readonly auth = inject(AuthService);
 
@@ -34,12 +38,12 @@ export class MeusAgendamentosComponent implements OnInit {
   readonly itens = signal<AgendamentoResponse[]>([]);
   readonly aba = signal<Aba>('proximos');
   readonly horariosOcupados = signal<string[]>([]);
+  readonly servicos = signal<ServicoResponse[]>([]);
+  readonly barbeiros = signal<BarbeiroResponse[]>([]);
 
   readonly editando = signal<AgendamentoResponse | null>(null);
   readonly cancelando = signal<AgendamentoResponse | null>(null);
 
-  readonly servicos = ['Corte clássico', 'Barba completa', 'Corte + barba', 'Sobrancelha'];
-  readonly barbeiros = ['Carlos Singer', 'Rafael Lima', 'Diego Alves'];
   readonly todosHorarios = [
     '08:00',
     '09:00',
@@ -82,11 +86,30 @@ export class MeusAgendamentosComponent implements OnInit {
 
   readonly listaAtual = computed(() => (this.aba() === 'proximos' ? this.proximos() : this.historico()));
 
+  readonly opcoesServico = computed(() => {
+    const cadastrados = this.servicos().map((item) => item.nome);
+    const atual = this.editando()?.servico;
+    if (atual && !cadastrados.includes(atual)) {
+      return [atual, ...cadastrados];
+    }
+    return cadastrados;
+  });
+
+  readonly opcoesBarbeiro = computed(() => {
+    const cadastrados = this.barbeiros().map((item) => item.nome);
+    const atual = this.editando()?.barbeiro;
+    if (atual && !cadastrados.includes(atual)) {
+      return [atual, ...cadastrados];
+    }
+    return cadastrados;
+  });
+
   ngOnInit(): void {
     if (!this.auth.isAuthenticated()) {
       void this.router.navigate(['/login'], { queryParams: { returnUrl: '/meus-agendamentos' } });
       return;
     }
+    this.carregarOpcoes();
     this.carregar();
 
     merge(this.form.controls.barbeiro.valueChanges, this.form.controls.data.valueChanges)
@@ -95,6 +118,24 @@ export class MeusAgendamentosComponent implements OnInit {
         if (this.editando()) {
           this.atualizarHorariosOcupados();
         }
+      });
+  }
+
+  private carregarOpcoes(): void {
+    this.servicoApi
+      .listar()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (lista) => this.servicos.set(lista),
+        error: () => this.servicos.set([])
+      });
+
+    this.barbeiroApi
+      .listar()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (lista) => this.barbeiros.set(lista),
+        error: () => this.barbeiros.set([])
       });
   }
 

@@ -44,6 +44,14 @@ API em `http://localhost:8080`.
 | POST | `/api/servicos` | Admin | Cadastra serviço |
 | PUT | `/api/servicos/{id}` | Admin | Edita serviço |
 | DELETE | `/api/servicos/{id}` | Admin | Exclui serviço |
+| GET | `/api/barbeiros` | Não | Lista barbeiros |
+| POST | `/api/barbeiros` | Admin | Cadastra barbeiro |
+| PUT | `/api/barbeiros/{id}` | Admin | Edita barbeiro |
+| DELETE | `/api/barbeiros/{id}` | Admin | Exclui barbeiro |
+| GET | `/api/clientes` | Admin | Lista clientes |
+| POST | `/api/clientes` | Admin | Cadastra cliente |
+| PUT | `/api/clientes/{id}` | Admin | Edita cliente |
+| DELETE | `/api/clientes/{id}` | Admin | Exclui cliente |
 
 ### Admin padrão (seed)
 
@@ -64,6 +72,8 @@ Abra `http://localhost:4200/login`.
 
 - Cliente: aba **Cadastrar** → depois redireciona para `/home`
 - Admin: aba **Entrar** com as credenciais acima → `/admin`
+- Serviços e barbeiros começam vazios: cadastre em `/admin/servicos` e `/admin/barbeiros`
+- Clientes: cadastro público com data de nascimento ou gestão em `/admin/clientes`
 
 ## Estrutura
 

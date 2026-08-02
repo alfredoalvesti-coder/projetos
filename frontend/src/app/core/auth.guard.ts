@@ -26,7 +26,7 @@ export const guestGuard: CanActivateFn = () => {
     return router.createUrlTree(['/admin/dashboard']);
   }
 
-  return true;
+  return router.createUrlTree(['/home']);
 };
 
 export const adminGuard: CanActivateFn = () => {
@@ -43,4 +43,16 @@ export const adminGuard: CanActivateFn = () => {
   }
 
   return router.createUrlTree(['/login']);
+};
+
+/** Bloqueia páginas de cliente quando o usuário é admin. */
+export const clientOnlyGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  if (auth.isAdmin()) {
+    return router.createUrlTree(['/admin/dashboard']);
+  }
+
+  return true;
 };

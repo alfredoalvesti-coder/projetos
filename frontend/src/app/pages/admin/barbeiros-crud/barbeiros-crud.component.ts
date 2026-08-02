@@ -1,25 +1,23 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
-  ServicoPayload,
-  ServicoResponse,
-  ServicoService,
-  formatarDuracao,
-  formatarPreco
-} from '../../../core/servico.service';
+  BarbeiroPayload,
+  BarbeiroResponse,
+  BarbeiroService
+} from '../../../core/barbeiro.service';
 
 @Component({
-  selector: 'app-servicos-crud',
+  selector: 'app-barbeiros-crud',
   standalone: true,
   imports: [ReactiveFormsModule],
-  templateUrl: './servicos-crud.component.html',
-  styleUrl: './servicos-crud.component.scss'
+  templateUrl: './barbeiros-crud.component.html',
+  styleUrl: './barbeiros-crud.component.scss'
 })
-export class ServicosCrudComponent implements OnInit {
+export class BarbeirosCrudComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly servicoApi = inject(ServicoService);
+  private readonly barbeiroApi = inject(BarbeiroService);
 
-  readonly servicos = signal<ServicoResponse[]>([]);
+  readonly barbeiros = signal<BarbeiroResponse[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly editingId = signal<number | null>(null);
@@ -29,13 +27,9 @@ export class ServicosCrudComponent implements OnInit {
 
   readonly form = this.fb.nonNullable.group({
     nome: ['', [Validators.required, Validators.maxLength(80)]],
-    descricao: ['', [Validators.required, Validators.maxLength(500)]],
-    duracaoMinutos: [30, [Validators.required, Validators.min(5)]],
-    preco: [0, [Validators.required, Validators.min(0)]]
+    especialidade: ['', [Validators.required, Validators.maxLength(120)]],
+    bio: ['', [Validators.required, Validators.maxLength(500)]]
   });
-
-  readonly formatarDuracao = formatarDuracao;
-  readonly formatarPreco = formatarPreco;
 
   ngOnInit(): void {
     this.carregar();
@@ -45,28 +39,27 @@ export class ServicosCrudComponent implements OnInit {
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    this.servicoApi.listar().subscribe({
+    this.barbeiroApi.listar().subscribe({
       next: (lista) => {
-        this.servicos.set(lista);
+        this.barbeiros.set(lista);
         this.loading.set(false);
       },
       error: () => {
         this.loading.set(false);
-        this.errorMessage.set('Não foi possível carregar os serviços.');
+        this.errorMessage.set('Não foi possível carregar os barbeiros.');
       }
     });
   }
 
-  editar(servico: ServicoResponse): void {
-    this.editingId.set(servico.id);
+  editar(barbeiro: BarbeiroResponse): void {
+    this.editingId.set(barbeiro.id);
     this.submitted.set(false);
     this.errorMessage.set(null);
     this.successMessage.set(null);
     this.form.setValue({
-      nome: servico.nome,
-      descricao: servico.descricao,
-      duracaoMinutos: servico.duracaoMinutos,
-      preco: Number(servico.preco)
+      nome: barbeiro.nome,
+      especialidade: barbeiro.especialidade,
+      bio: barbeiro.bio
     });
   }
 
@@ -75,13 +68,12 @@ export class ServicosCrudComponent implements OnInit {
     this.submitted.set(false);
     this.form.reset({
       nome: '',
-      descricao: '',
-      duracaoMinutos: 30,
-      preco: 0
+      especialidade: '',
+      bio: ''
     });
   }
 
-  campoInvalido(nome: 'nome' | 'descricao' | 'duracaoMinutos' | 'preco'): boolean {
+  campoInvalido(nome: 'nome' | 'especialidade' | 'bio'): boolean {
     const campo = this.form.controls[nome];
     return campo.invalid && (campo.touched || this.submitted());
   }
@@ -98,33 +90,32 @@ export class ServicosCrudComponent implements OnInit {
     }
 
     const raw = this.form.getRawValue();
-    const payload: ServicoPayload = {
+    const payload: BarbeiroPayload = {
       nome: raw.nome.trim(),
-      descricao: raw.descricao.trim(),
-      duracaoMinutos: Number(raw.duracaoMinutos),
-      preco: Number(raw.preco)
+      especialidade: raw.especialidade.trim(),
+      bio: raw.bio.trim()
     };
 
     this.saving.set(true);
     const id = this.editingId();
-    const request$ = id == null ? this.servicoApi.criar(payload) : this.servicoApi.atualizar(id, payload);
+    const request$ = id == null ? this.barbeiroApi.criar(payload) : this.barbeiroApi.atualizar(id, payload);
 
     request$.subscribe({
       next: () => {
         this.saving.set(false);
-        this.successMessage.set(id == null ? 'Serviço cadastrado.' : 'Serviço atualizado.');
+        this.successMessage.set(id == null ? 'Barbeiro cadastrado.' : 'Barbeiro atualizado.');
         this.cancelarEdicao();
         this.carregar();
       },
       error: (err) => {
         this.saving.set(false);
-        this.errorMessage.set(err?.error?.message || 'Não foi possível salvar o serviço.');
+        this.errorMessage.set(err?.error?.message || 'Não foi possível salvar o barbeiro.');
       }
     });
   }
 
-  excluir(servico: ServicoResponse): void {
-    const ok = window.confirm(`Excluir o serviço "${servico.nome}"?`);
+  excluir(barbeiro: BarbeiroResponse): void {
+    const ok = window.confirm(`Excluir o barbeiro "${barbeiro.nome}"?`);
     if (!ok) {
       return;
     }
@@ -132,16 +123,16 @@ export class ServicosCrudComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.servicoApi.excluir(servico.id).subscribe({
+    this.barbeiroApi.excluir(barbeiro.id).subscribe({
       next: () => {
-        if (this.editingId() === servico.id) {
+        if (this.editingId() === barbeiro.id) {
           this.cancelarEdicao();
         }
-        this.successMessage.set('Serviço excluído.');
+        this.successMessage.set('Barbeiro excluído.');
         this.carregar();
       },
       error: (err) => {
-        this.errorMessage.set(err?.error?.message || 'Não foi possível excluir o serviço.');
+        this.errorMessage.set(err?.error?.message || 'Não foi possível excluir o barbeiro.');
       }
     });
   }

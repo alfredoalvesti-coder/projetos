@@ -1,11 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-
-interface Barbeiro {
-  nome: string;
-  especialidade: string;
-  bio: string;
-}
+import { BarbeiroResponse, BarbeiroService } from '../../core/barbeiro.service';
 
 @Component({
   selector: 'app-barbeiros',
@@ -14,22 +10,31 @@ interface Barbeiro {
   templateUrl: './barbeiros.component.html',
   styleUrl: './barbeiros.component.scss'
 })
-export class BarbeirosComponent {
-  readonly barbeiros: Barbeiro[] = [
-    {
-      nome: 'Carlos Singer',
-      especialidade: 'Cortes clássicos',
-      bio: 'Fundador da casa. Especialista em fade e acabamento preciso.'
-    },
-    {
-      nome: 'Rafael Lima',
-      especialidade: 'Barba e bigode',
-      bio: 'Detalhista na modelagem e nos rituais de toalha quente.'
-    },
-    {
-      nome: 'Diego Alves',
-      especialidade: 'Estilos modernos',
-      bio: 'Atualizado nas tendências e no visual criativo.'
-    }
-  ];
+export class BarbeirosComponent implements OnInit {
+  private readonly barbeiroApi = inject(BarbeiroService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly barbeiros = signal<BarbeiroResponse[]>([]);
+  readonly loading = signal(true);
+  readonly errorMessage = signal<string | null>(null);
+
+  ngOnInit(): void {
+    this.barbeiroApi
+      .listar()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (lista) => {
+          this.barbeiros.set(lista);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.errorMessage.set('Não foi possível carregar os barbeiros.');
+        }
+      });
+  }
+
+  primeiroNome(nome: string): string {
+    return nome.trim().split(/\s+/)[0] || nome;
+  }
 }

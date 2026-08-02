@@ -1,0 +1,81 @@
+<section class="barbeiros-admin">
+  <section class="panel">
+    <header class="panel__head">
+      <h3>{{ editingId() ? 'Editar barbeiro' : 'Novo barbeiro' }}</h3>
+      @if (editingId()) {
+        <button type="button" class="link" (click)="cancelarEdicao()">Cancelar edição</button>
+      }
+    </header>
+
+    @if (errorMessage()) {
+      <p class="feedback feedback--error" role="alert">{{ errorMessage() }}</p>
+    }
+    @if (successMessage()) {
+      <p class="feedback feedback--ok">{{ successMessage() }}</p>
+    }
+
+    <form class="form" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <label class="field" [class.is-invalid]="campoInvalido('nome')">
+        <span>Nome *</span>
+        <input type="text" formControlName="nome" maxlength="80" autocomplete="off" />
+      </label>
+
+      <label class="field" [class.is-invalid]="campoInvalido('especialidade')">
+        <span>Especialidade *</span>
+        <input type="text" formControlName="especialidade" maxlength="120" autocomplete="off" />
+      </label>
+
+      <label class="field" [class.is-invalid]="campoInvalido('bio')">
+        <span>Bio *</span>
+        <textarea formControlName="bio" rows="3" maxlength="500"></textarea>
+      </label>
+
+      <div class="form__actions">
+        <button type="submit" class="btn" [disabled]="saving()">
+          {{ saving() ? 'Salvando...' : editingId() ? 'Salvar alterações' : 'Cadastrar barbeiro' }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <header class="panel__head">
+      <h3>Barbeiros cadastrados</h3>
+      <button type="button" class="link" (click)="carregar()" [disabled]="loading()">Atualizar</button>
+    </header>
+
+    @if (loading()) {
+      <p class="muted">Carregando...</p>
+    } @else if (barbeiros().length === 0) {
+      <p class="muted">Nenhum barbeiro cadastrado ainda. Use o formulário acima para começar.</p>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Especialidade</th>
+              <th>Bio</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (barbeiro of barbeiros(); track barbeiro.id) {
+              <tr [class.is-editing]="editingId() === barbeiro.id">
+                <td data-label="Nome">{{ barbeiro.nome }}</td>
+                <td data-label="Especialidade">{{ barbeiro.especialidade }}</td>
+                <td data-label="Bio" class="desc">{{ barbeiro.bio }}</td>
+                <td class="actions">
+                  <button type="button" class="btn btn--small" (click)="editar(barbeiro)">Editar</button>
+                  <button type="button" class="btn btn--small btn--danger" (click)="excluir(barbeiro)">
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</section>

@@ -13,15 +13,23 @@
       <a routerLink="/home" routerLinkActive="is-active">Home</a>
       <a routerLink="/servicos" routerLinkActive="is-active">Serviços</a>
       <a routerLink="/barbeiros" routerLinkActive="is-active">Barbeiros</a>
-      <a routerLink="/agendamento" routerLinkActive="is-active">Agendamento</a>
-      @if (auth.isAuthenticated()) {
-        <a routerLink="/meus-agendamentos" routerLinkActive="is-active">Meus horários</a>
+
+      @if (!auth.isAdmin()) {
+        <a routerLink="/agendamento" routerLinkActive="is-active">Agendamento</a>
+        @if (auth.isCliente()) {
+          <a routerLink="/meus-agendamentos" routerLinkActive="is-active">Meus horários</a>
+        }
       }
+
       <a routerLink="/sobre" routerLinkActive="is-active">Sobre</a>
       <a routerLink="/contato" routerLinkActive="is-active">Contato</a>
 
       <div class="nav__actions">
-        @if (auth.isAuthenticated()) {
+        @if (auth.isAdmin()) {
+          <span class="nav__badge">Admin</span>
+          <a routerLink="/admin/dashboard" class="btn btn--gold">Painel admin</a>
+          <button type="button" class="btn btn--ghost" (click)="logout()">Sair</button>
+        } @else if (auth.isAuthenticated()) {
           <span class="nav__user">{{ auth.session()?.nome }}</span>
           <button type="button" class="btn btn--ghost" (click)="logout()">Sair</button>
         } @else {

@@ -24,6 +24,20 @@
         <button type="button" class="btn btn--ghost" (click)="enviado.set(false)">Fazer outro</button>
       </div>
     </div>
+  } @else if (loadingOpcoes()) {
+    <p class="state">Carregando opções...</p>
+  } @else if (servicos().length === 0 || barbeiros().length === 0) {
+    <div class="notice">
+      @if (servicos().length === 0 && barbeiros().length === 0) {
+        <p>Ainda não há serviços e barbeiros cadastrados. Volte em breve ou fale com a barbearia.</p>
+      } @else if (servicos().length === 0) {
+        <p>Ainda não há serviços cadastrados. Volte em breve ou fale com a barbearia.</p>
+        <a routerLink="/servicos" class="btn btn--ghost">Ver página de serviços</a>
+      } @else {
+        <p>Ainda não há barbeiros cadastrados. Volte em breve ou fale com a barbearia.</p>
+        <a routerLink="/barbeiros" class="btn btn--ghost">Ver página de barbeiros</a>
+      }
+    </div>
   } @else {
     @if (errorMessage()) {
       <p class="feedback" role="alert">{{ errorMessage() }}</p>
@@ -47,8 +61,8 @@
         <span>Barbeiro *</span>
         <select formControlName="barbeiro" [attr.aria-invalid]="campoInvalido('barbeiro')">
           <option value="" disabled>Selecione</option>
-          @for (barbeiro of barbeiros; track barbeiro) {
-            <option [value]="barbeiro">{{ barbeiro }}</option>
+          @for (barbeiro of barbeiros(); track barbeiro.id) {
+            <option [value]="barbeiro.nome">{{ barbeiro.nome }}</option>
           }
         </select>
         @if (campoInvalido('barbeiro')) {

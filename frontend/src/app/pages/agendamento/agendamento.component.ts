@@ -2,9 +2,10 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { debounceTime, distinctUntilChanged, merge } from 'rxjs';
+import { debounceTime, distinctUntilChanged, forkJoin, merge } from 'rxjs';
 import { AuthService } from '../../core/auth.service';
 import { AgendamentoService } from '../../core/agendamento.service';
+import { BarbeiroResponse, BarbeiroService } from '../../core/barbeiro.service';
 import { ServicoResponse, ServicoService } from '../../core/servico.service';
 
 @Component({
@@ -20,18 +21,20 @@ export class AgendamentoComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly agendamentoService = inject(AgendamentoService);
   private readonly servicoApi = inject(ServicoService);
+  private readonly barbeiroApi = inject(BarbeiroService);
   private readonly destroyRef = inject(DestroyRef);
   readonly auth = inject(AuthService);
 
   readonly enviado = signal(false);
   readonly loading = signal(false);
   readonly loadingHorarios = signal(false);
-  readonly loadingServicos = signal(true);
+  readonly loadingOpcoes = signal(true);
   readonly errorMessage = signal<string | null>(null);
   readonly ultimoId = signal<number | null>(null);
   readonly submitted = signal(false);
   readonly horariosOcupados = signal<string[]>([]);
   readonly servicos = signal<ServicoResponse[]>([]);
+  readonly barbeiros = signal<BarbeiroResponse[]>([]);
 
   readonly form = this.fb.nonNullable.group({
     servico: ['', Validators.required],
@@ -41,7 +44,6 @@ export class AgendamentoComponent implements OnInit {
     observacao: ['']
   });
 
-  readonly barbeiros = ['Carlos Singer', 'Rafael Lima', 'Diego Alves'];
   readonly todosHorarios = [
     '08:00',
     '09:00',
@@ -63,31 +65,39 @@ export class AgendamentoComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.carregarServicos();
+    this.carregarOpcoes();
 
     merge(this.form.controls.barbeiro.valueChanges, this.form.controls.data.valueChanges)
       .pipe(debounceTime(150), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.atualizarHorariosOcupados());
   }
 
-  private carregarServicos(): void {
-    this.loadingServicos.set(true);
-    this.servicoApi
-      .listar()
+  private carregarOpcoes(): void {
+    this.loadingOpcoes.set(true);
+    forkJoin({
+      servicos: this.servicoApi.listar(),
+      barbeiros: this.barbeiroApi.listar()
+    })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (lista) => {
-          this.servicos.set(lista);
-          this.loadingServicos.set(false);
+        next: ({ servicos, barbeiros }) => {
+          this.servicos.set(servicos);
+          this.barbeiros.set(barbeiros);
+          this.loadingOpcoes.set(false);
 
-          const preselecionado = this.route.snapshot.queryParamMap.get('servico');
-          if (preselecionado && lista.some((item) => item.nome === preselecionado)) {
-            this.form.controls.servico.setValue(preselecionado);
+          const servicoPre = this.route.snapshot.queryParamMap.get('servico');
+          if (servicoPre && servicos.some((item) => item.nome === servicoPre)) {
+            this.form.controls.servico.setValue(servicoPre);
+          }
+
+          const barbeiroPre = this.route.snapshot.queryParamMap.get('barbeiro');
+          if (barbeiroPre && barbeiros.some((item) => item.nome === barbeiroPre)) {
+            this.form.controls.barbeiro.setValue(barbeiroPre);
           }
         },
         error: () => {
-          this.loadingServicos.set(false);
-          this.errorMessage.set('Não foi possível carregar os serviços.');
+          this.loadingOpcoes.set(false);
+          this.errorMessage.set('Não foi possível carregar serviços e barbeiros.');
         }
       });
   }

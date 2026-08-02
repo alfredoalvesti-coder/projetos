@@ -17,6 +17,7 @@ export interface UserResponse {
   id: number;
   nome: string;
   email: string;
+  dataNascimento: string | null;
   role: Role;
 }
 
@@ -29,6 +30,7 @@ export interface RegisterPayload {
   nome: string;
   email: string;
   senha: string;
+  dataNascimento: string;
 }
 
 interface StoredSession {
@@ -67,7 +69,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.storageKey);
     this.sessionSignal.set(null);
-    void this.router.navigateByUrl('/home');
+    void this.router.navigateByUrl('/login');
   }
 
   getToken(): string | null {
@@ -78,6 +80,14 @@ export class AuthService {
     return !!this.sessionSignal()?.token;
   }
 
+  isAdmin(): boolean {
+    return this.sessionSignal()?.role === 'ADMIN';
+  }
+
+  isCliente(): boolean {
+    return this.sessionSignal()?.role === 'CLIENTE';
+  }
+
   redirectAfterLogin(role: Role, returnUrl?: string | null): void {
     if (role === 'ADMIN') {
       void this.router.navigateByUrl('/admin/dashboard');
@@ -85,7 +95,12 @@ export class AuthService {
     }
 
     const safeReturn =
-      returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/home';
+      returnUrl &&
+      returnUrl.startsWith('/') &&
+      !returnUrl.startsWith('//') &&
+      !returnUrl.startsWith('/admin')
+        ? returnUrl
+        : '/home';
     void this.router.navigateByUrl(safeReturn);
   }
 

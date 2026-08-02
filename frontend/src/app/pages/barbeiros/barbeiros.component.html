@@ -4,15 +4,25 @@
     <p>Conheça quem cuida do seu visual na Barbearia Singer.</p>
   </header>
 
-  <div class="grid">
-    @for (barbeiro of barbeiros; track barbeiro.nome) {
-      <article class="card">
-        <div class="avatar" aria-hidden="true">{{ barbeiro.nome.charAt(0) }}</div>
-        <h2>{{ barbeiro.nome }}</h2>
-        <p class="tag">{{ barbeiro.especialidade }}</p>
-        <p>{{ barbeiro.bio }}</p>
-        <a routerLink="/agendamento">Agendar com {{ barbeiro.nome.split(' ')[0] }}</a>
-      </article>
-    }
-  </div>
+  @if (loading()) {
+    <p class="state">Carregando barbeiros...</p>
+  } @else if (errorMessage()) {
+    <p class="state state--error">{{ errorMessage() }}</p>
+  } @else if (barbeiros().length === 0) {
+    <p class="state">Nenhum barbeiro disponível no momento.</p>
+  } @else {
+    <div class="grid">
+      @for (barbeiro of barbeiros(); track barbeiro.id) {
+        <article class="card">
+          <div class="avatar" aria-hidden="true">{{ barbeiro.nome.charAt(0) }}</div>
+          <h2>{{ barbeiro.nome }}</h2>
+          <p class="tag">{{ barbeiro.especialidade }}</p>
+          <p>{{ barbeiro.bio }}</p>
+          <a routerLink="/agendamento" [queryParams]="{ barbeiro: barbeiro.nome }">
+            Agendar com {{ primeiroNome(barbeiro.nome) }}
+          </a>
+        </article>
+      }
+    </div>
+  }
 </section>

@@ -100,6 +100,15 @@
             <input type="email" formControlName="email" autocomplete="email" placeholder="voce@email.com" />
           </label>
           <label class="field">
+            <span>Data de nascimento</span>
+            <input
+              type="date"
+              formControlName="dataNascimento"
+              [attr.max]="maxDataNascimento"
+              autocomplete="bday"
+            />
+          </label>
+          <label class="field">
             <span>Senha</span>
             <div class="field__password">
               <input

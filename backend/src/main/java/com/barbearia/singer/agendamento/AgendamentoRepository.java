@@ -31,4 +31,10 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
     List<Agendamento> findByUsuarioOrderByDataDescHorarioDesc(Usuario usuario);
 
     Optional<Agendamento> findByIdAndUsuario(Long id, Usuario usuario);
+
+    boolean existsByUsuario(Usuario usuario);
+
+    Optional<Agendamento> findFirstByUsuarioAndStatusNotOrderByDataDescHorarioDesc(
+            Usuario usuario,
+            StatusAgendamento status);
 }

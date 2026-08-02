@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.barbearia.singer.user.Role;
+import com.barbearia.singer.user.StatusCliente;
 import com.barbearia.singer.user.Usuario;
 import com.barbearia.singer.user.UsuarioRepository;
 
@@ -37,6 +38,7 @@ public class AdminSeed implements ApplicationRunner {
         admin.setEmail("admin@barbeariasinger.com");
         admin.setSenha(passwordEncoder.encode("admin123"));
         admin.setRole(Role.ADMIN);
+        admin.setStatus(StatusCliente.ATIVO);
         usuarioRepository.save(admin);
 
         log.info("Admin criado: admin@barbeariaSinger.com / admin123");

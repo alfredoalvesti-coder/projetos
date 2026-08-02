@@ -1,0 +1,358 @@
+<section class="clients">
+  <header class="clients__head">
+    <div>
+      <h2>Clientes</h2>
+      <p>Gerencie seus clientes</p>
+    </div>
+    <button type="button" class="btn btn--primary" (click)="openCreate()">
+      <svg lucidePlus [size]="18"></svg>
+      Novo Cliente
+    </button>
+  </header>
+
+  <div class="toolbar">
+    <label class="search">
+      <svg lucideSearch [size]="18"></svg>
+      <input
+        type="search"
+        placeholder="Buscar por nome, telefone ou e-mail..."
+        [value]="search()"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </label>
+    <span class="toolbar__count">{{ totalFiltrados() }} cadastrados</span>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-panel" aria-hidden="true">
+      @for (row of [1, 2, 3, 4, 5]; track row) {
+        <div class="skeleton-row">
+          <span class="sk sk--avatar"></span>
+          <span class="sk sk--line"></span>
+          <span class="sk sk--line sk--short"></span>
+          <span class="sk sk--line"></span>
+        </div>
+      }
+    </div>
+  } @else if (filtrados().length === 0) {
+    <div class="empty">
+      <div class="empty__icon" aria-hidden="true">
+        <svg lucideUsers [size]="28"></svg>
+      </div>
+      @if (search()) {
+        <h3>Nenhum resultado</h3>
+        <p>Não encontramos clientes para “{{ search() }}”.</p>
+        <button type="button" class="btn btn--ghost" (click)="onSearch('')">Limpar busca</button>
+      } @else {
+        <h3>Nenhum cliente ainda</h3>
+        <p>Cadastre o primeiro cliente para começar a organizar sua agenda.</p>
+        <button type="button" class="btn btn--primary" (click)="openCreate()">
+          <svg lucidePlus [size]="18"></svg>
+          Novo Cliente
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="table-wrap desktop-only">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th>Nascimento</th>
+            <th>Último agendamento</th>
+            <th>Status</th>
+            <th class="col-actions">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cliente of pageItems(); track cliente.id) {
+            <tr>
+              <td>
+                <div class="person">
+                  <span class="avatar">{{ initials(cliente.nome) }}</span>
+                  <strong>{{ cliente.nome }}</strong>
+                </div>
+              </td>
+              <td>{{ cliente.telefone || '—' }}</td>
+              <td>{{ cliente.email || '—' }}</td>
+              <td>{{ formatarDataBr(cliente.dataNascimento) }}</td>
+              <td>
+                @if (cliente.ultimoAgendamento) {
+                  {{ formatarDataBr(cliente.ultimoAgendamento) }}
+                  @if (cliente.ultimoAgendamentoHorario) {
+                    <span class="muted"> · {{ cliente.ultimoAgendamentoHorario }}</span>
+                  }
+                } @else {
+                  —
+                }
+              </td>
+              <td>
+                <span class="badge" [attr.data-status]="cliente.status">
+                  {{ statusLabel(cliente.status) }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <div class="actions">
+                  <button
+                    type="button"
+                    class="action-btn action-btn--view"
+                    title="Visualizar"
+                    aria-label="Visualizar"
+                    (click)="openView(cliente)"
+                  >
+                    <svg lucideEye [size]="16"></svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="action-btn action-btn--edit"
+                    title="Editar"
+                    aria-label="Editar"
+                    (click)="openEdit(cliente)"
+                  >
+                    <svg lucidePencil [size]="16"></svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="action-btn action-btn--schedule"
+                    title="Agendar"
+                    aria-label="Agendar"
+                    (click)="novoAgendamento(cliente)"
+                  >
+                    <svg lucideCalendarPlus [size]="16"></svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="action-btn action-btn--delete"
+                    title="Excluir"
+                    aria-label="Excluir"
+                    (click)="askDelete(cliente)"
+                  >
+                    <svg lucideTrash2 [size]="16"></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cards mobile-only">
+      @for (cliente of pageItems(); track cliente.id) {
+        <article class="card">
+          <header class="card__head">
+            <div class="person">
+              <span class="avatar">{{ initials(cliente.nome) }}</span>
+              <div>
+                <strong>{{ cliente.nome }}</strong>
+                <span class="badge" [attr.data-status]="cliente.status">
+                  {{ statusLabel(cliente.status) }}
+                </span>
+              </div>
+            </div>
+            <div class="actions">
+              <button
+                type="button"
+                class="action-btn action-btn--view"
+                title="Visualizar"
+                aria-label="Visualizar"
+                (click)="openView(cliente)"
+              >
+                <svg lucideEye [size]="16"></svg>
+              </button>
+              <button
+                type="button"
+                class="action-btn action-btn--edit"
+                title="Editar"
+                aria-label="Editar"
+                (click)="openEdit(cliente)"
+              >
+                <svg lucidePencil [size]="16"></svg>
+              </button>
+              <button
+                type="button"
+                class="action-btn action-btn--schedule"
+                title="Agendar"
+                aria-label="Agendar"
+                (click)="novoAgendamento(cliente)"
+              >
+                <svg lucideCalendarPlus [size]="16"></svg>
+              </button>
+              <button
+                type="button"
+                class="action-btn action-btn--delete"
+                title="Excluir"
+                aria-label="Excluir"
+                (click)="askDelete(cliente)"
+              >
+                <svg lucideTrash2 [size]="16"></svg>
+              </button>
+            </div>
+          </header>
+          <dl class="card__meta">
+            <div>
+              <dt>Telefone</dt>
+              <dd>{{ cliente.telefone || '—' }}</dd>
+            </div>
+            <div>
+              <dt>E-mail</dt>
+              <dd>{{ cliente.email || '—' }}</dd>
+            </div>
+            <div>
+              <dt>Nascimento</dt>
+              <dd>{{ formatarDataBr(cliente.dataNascimento) }}</dd>
+            </div>
+            <div>
+              <dt>Último agendamento</dt>
+              <dd>
+                @if (cliente.ultimoAgendamento) {
+                  {{ formatarDataBr(cliente.ultimoAgendamento) }}
+                  @if (cliente.ultimoAgendamentoHorario) {
+                    · {{ cliente.ultimoAgendamentoHorario }}
+                  }
+                } @else {
+                  —
+                }
+              </dd>
+            </div>
+          </dl>
+        </article>
+      }
+    </div>
+
+    <footer class="pager">
+      <p>{{ rangeLabel() }}</p>
+      <div class="pager__actions">
+        <button type="button" class="btn btn--ghost" [disabled]="paginaAtual() <= 1" (click)="prevPage()">
+          Anterior
+        </button>
+        <span>{{ paginaAtual() }} / {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          class="btn btn--ghost"
+          [disabled]="paginaAtual() >= totalPaginas()"
+          (click)="nextPage()"
+        >
+          Próxima
+        </button>
+      </div>
+    </footer>
+  }
+</section>
+
+@if (modalOpen()) {
+  <div class="overlay" (click)="closeModal()">
+    <div
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="modalTitle()"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="modal__head">
+        <div>
+          <p class="eyebrow">Clientes</p>
+          <h3>{{ modalTitle() }}</h3>
+        </div>
+        <button type="button" class="icon-btn" aria-label="Fechar" (click)="closeModal()">
+          <svg lucideX [size]="18"></svg>
+        </button>
+      </header>
+
+      <form class="modal__form" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+        <label class="field" [class.is-invalid]="campoInvalido('nome')">
+          <span>Nome *</span>
+          <input type="text" formControlName="nome" maxlength="120" autocomplete="name" />
+        </label>
+
+        <label class="field" [class.is-invalid]="campoInvalido('telefone')">
+          <span>Telefone *</span>
+          <input type="tel" formControlName="telefone" maxlength="30" autocomplete="tel" placeholder="(11) 99999-9999" />
+        </label>
+
+        <label class="field" [class.is-invalid]="campoInvalido('email')">
+          <span>E-mail *</span>
+          <input
+            type="email"
+            formControlName="email"
+            maxlength="180"
+            autocomplete="email"
+            placeholder="cliente@email.com"
+          />
+        </label>
+
+        <label class="field" [class.is-invalid]="campoInvalido('dataNascimento')">
+          <span>Data de nascimento</span>
+          <div class="date-field">
+            <input
+              #dataNascimentoInput
+              type="date"
+              formControlName="dataNascimento"
+              [attr.max]="maxDataNascimento"
+              autocomplete="bday"
+            />
+            <button
+              type="button"
+              class="date-field__btn"
+              aria-label="Abrir calendário"
+              [disabled]="isViewMode()"
+              (click)="abrirCalendario(dataNascimentoInput)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3 9h18" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="7" y="12" width="3" height="3" rx="0.5" fill="currentColor"/>
+                <rect x="11" y="12" width="3" height="3" rx="0.5" fill="currentColor"/>
+                <rect x="15" y="12" width="3" height="3" rx="0.5" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+        </label>
+
+        <label class="field" [class.is-invalid]="campoInvalido('observacoes')">
+          <span>Observações</span>
+          <textarea formControlName="observacoes" rows="3" maxlength="1000" placeholder="Preferências, alergias, observações internas..."></textarea>
+        </label>
+
+        @if (modalMode() !== 'create') {
+          <label class="field">
+            <span>Status</span>
+            <select formControlName="status">
+              <option value="ATIVO">Ativo</option>
+              <option value="INATIVO">Inativo</option>
+            </select>
+          </label>
+        }
+
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost" (click)="closeModal()">
+            {{ isViewMode() ? 'Fechar' : 'Cancelar' }}
+          </button>
+          @if (!isViewMode()) {
+            <button type="submit" class="btn btn--primary" [disabled]="saving()">
+              {{ saving() ? 'Salvando...' : modalMode() === 'edit' ? 'Salvar alterações' : 'Cadastrar cliente' }}
+            </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (confirmDelete(); as cliente) {
+  <div class="overlay" (click)="cancelDelete()">
+    <div class="confirm" role="alertdialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <h3>Excluir cliente?</h3>
+      <p>
+        Tem certeza que deseja excluir <strong>{{ cliente.nome }}</strong>? Essa ação não pode ser desfeita.
+      </p>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="btn btn--danger" (click)="confirmDeleteAction()">Excluir</button>
+      </div>
+    </div>
+  </div>
+}

@@ -28,12 +28,12 @@ public class UsuarioPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return usuario.getSenha();
+        return usuario.getSenha() != null ? usuario.getSenha() : "";
     }
 
     @Override
     public String getUsername() {
-        return usuario.getEmail();
+        return usuario.getEmail() != null ? usuario.getEmail() : "";
     }
 
     @Override
@@ -53,6 +53,6 @@ public class UsuarioPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return usuario.getSenha() != null && !usuario.getSenha().isBlank();
     }
 }

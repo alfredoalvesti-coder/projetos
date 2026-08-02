@@ -32,8 +32,15 @@ export class LoginComponent {
   readonly registerForm = this.fb.nonNullable.group({
     nome: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
+    dataNascimento: ['', [Validators.required]],
     senha: ['', [Validators.required, Validators.minLength(6)]]
   });
+
+  readonly maxDataNascimento = (() => {
+    const hoje = new Date();
+    hoje.setDate(hoje.getDate() - 1);
+    return hoje.toISOString().slice(0, 10);
+  })();
 
   private returnUrl(): string | null {
     return this.route.snapshot.queryParamMap.get('returnUrl');

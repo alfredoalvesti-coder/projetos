@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard, authGuard, guestGuard } from './core/auth.guard';
+import { adminGuard, authGuard, clientOnlyGuard, guestGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -26,11 +26,13 @@ export const routes: Routes = [
       },
       {
         path: 'agendamento',
+        canActivate: [clientOnlyGuard],
         loadComponent: () =>
           import('./pages/agendamento/agendamento.component').then((m) => m.AgendamentoComponent)
       },
       {
         path: 'meus-agendamentos',
+        canActivate: [clientOnlyGuard],
         loadComponent: () =>
           import('./pages/meus-agendamentos/meus-agendamentos.component').then(
             (m) => m.MeusAgendamentosComponent
@@ -57,6 +59,27 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./pages/admin/dashboard/dashboard.component').then((m) => m.DashboardComponent)
+      },
+      {
+        path: 'servicos',
+        loadComponent: () =>
+          import('./pages/admin/servicos-crud/servicos-crud.component').then(
+            (m) => m.ServicosCrudComponent
+          )
+      },
+      {
+        path: 'barbeiros',
+        loadComponent: () =>
+          import('./pages/admin/barbeiros-crud/barbeiros-crud.component').then(
+            (m) => m.BarbeirosCrudComponent
+          )
+      },
+      {
+        path: 'clientes',
+        loadComponent: () =>
+          import('./pages/admin/clientes-crud/clientes-crud.component').then(
+            (m) => m.ClientesCrudComponent
+          )
       }
     ]
   },

@@ -97,7 +97,10 @@
         <label class="field">
           <span>Serviço</span>
           <select formControlName="servico">
-            @for (servico of servicos; track servico) {
+            @if (opcoesServico().length === 0) {
+              <option value="" disabled>Nenhum serviço cadastrado</option>
+            }
+            @for (servico of opcoesServico(); track servico) {
               <option [value]="servico">{{ servico }}</option>
             }
           </select>
@@ -105,7 +108,10 @@
         <label class="field">
           <span>Barbeiro</span>
           <select formControlName="barbeiro">
-            @for (barbeiro of barbeiros; track barbeiro) {
+            @if (opcoesBarbeiro().length === 0) {
+              <option value="" disabled>Nenhum barbeiro cadastrado</option>
+            }
+            @for (barbeiro of opcoesBarbeiro(); track barbeiro) {
               <option [value]="barbeiro">{{ barbeiro }}</option>
             }
           </select>

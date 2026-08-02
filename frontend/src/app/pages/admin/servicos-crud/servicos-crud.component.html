@@ -1,16 +1,7 @@
-<div class="admin">
-  <header class="admin__top">
-    <div>
-      <p class="eyebrow">Painel</p>
-      <h1>Administração</h1>
-      <p class="subtitle">Olá, {{ auth.session()?.nome }} — gerencie os serviços da Barbearia Singer.</p>
-    </div>
-    <button type="button" class="btn btn--ghost" (click)="auth.logout()">Sair</button>
-  </header>
-
+<section class="servicos-admin">
   <section class="panel">
     <header class="panel__head">
-      <h2>{{ editingId() ? 'Editar serviço' : 'Novo serviço' }}</h2>
+      <h3>{{ editingId() ? 'Editar serviço' : 'Novo serviço' }}</h3>
       @if (editingId()) {
         <button type="button" class="link" (click)="cancelarEdicao()">Cancelar edição</button>
       }
@@ -56,14 +47,14 @@
 
   <section class="panel">
     <header class="panel__head">
-      <h2>Serviços cadastrados</h2>
+      <h3>Serviços cadastrados</h3>
       <button type="button" class="link" (click)="carregar()" [disabled]="loading()">Atualizar</button>
     </header>
 
     @if (loading()) {
       <p class="muted">Carregando...</p>
     } @else if (servicos().length === 0) {
-      <p class="muted">Nenhum serviço cadastrado ainda.</p>
+      <p class="muted">Nenhum serviço cadastrado ainda. Use o formulário acima para começar.</p>
     } @else {
       <div class="table-wrap">
         <table class="table">
@@ -96,4 +87,4 @@
       </div>
     }
   </section>
-</div>
+</section>
