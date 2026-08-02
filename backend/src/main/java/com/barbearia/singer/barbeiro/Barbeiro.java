@@ -21,6 +21,9 @@ public class Barbeiro {
     @Column(nullable = false, length = 120)
     private String especialidade;
 
+    @Column(nullable = false, length = 30)
+    private String telefone;
+
     @Column(nullable = false, length = 500)
     private String bio;
 
@@ -46,6 +49,14 @@ public class Barbeiro {
 
     public void setEspecialidade(String especialidade) {
         this.especialidade = especialidade;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getBio() {

@@ -7,12 +7,14 @@ export interface BarbeiroResponse {
   id: number;
   nome: string;
   especialidade: string;
+  telefone: string;
   bio: string;
 }
 
 export interface BarbeiroPayload {
   nome: string;
   especialidade: string;
+  telefone: string;
   bio: string;
 }
 

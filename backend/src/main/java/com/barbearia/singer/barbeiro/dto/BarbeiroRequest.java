@@ -14,6 +14,10 @@ public class BarbeiroRequest {
     private String especialidade;
 
     @NotBlank
+    @Size(max = 30)
+    private String telefone;
+
+    @NotBlank
     @Size(max = 500)
     private String bio;
 
@@ -31,6 +35,14 @@ public class BarbeiroRequest {
 
     public void setEspecialidade(String especialidade) {
         this.especialidade = especialidade;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getBio() {

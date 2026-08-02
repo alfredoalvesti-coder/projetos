@@ -66,6 +66,7 @@ public class BarbeiroService {
     private void aplicarDados(Barbeiro barbeiro, BarbeiroRequest request) {
         barbeiro.setNome(request.getNome().trim());
         barbeiro.setEspecialidade(request.getEspecialidade().trim());
+        barbeiro.setTelefone(request.getTelefone().trim());
         barbeiro.setBio(request.getBio().trim());
     }
 }
